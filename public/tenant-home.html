@@ -1,0 +1,1241 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Trang chủ - Overlio.com</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 0.5rem 1rem;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+
+        .brand-logo {
+            font-size: 1.5rem;
+        }
+
+        .brand-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .tenant-name {
+            font-weight: 500;
+            color: #667eea;
+        }
+
+        .user-menu {
+            position: relative;
+        }
+
+        .user-menu-btn {
+            background: rgba(102, 126, 234, 0.1);
+            border: 1px solid rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            padding: 6px 12px;
+            border-radius: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu-btn:hover {
+            background: rgba(102, 126, 234, 0.2);
+            border-color: rgba(102, 126, 234, 0.3);
+        }
+
+        .dropdown-arrow {
+            font-size: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .user-menu.active .dropdown-arrow {
+            transform: rotate(180deg);
+        }
+
+        .user-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            min-width: 180px;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            margin-top: 5px;
+        }
+
+        .user-menu.active .user-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-item {
+            padding: 10px 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #333;
+            font-size: 13px;
+            transition: background-color 0.2s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        .dropdown-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .dropdown-item .icon {
+            font-size: 14px;
+            width: 18px;
+            text-align: center;
+        }
+
+        .dropdown-divider {
+            height: 1px;
+            background-color: #e9ecef;
+            margin: 4px 0;
+        }
+
+        .logout-btn {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #c0392b;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            line-height: 1;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 2px rgba(102, 126, 234, 0.25);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background-color: #218838;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .btn-info {
+            background-color: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background-color: #138496;
+        }
+
+
+
+        /* Stats Grid Styles */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .stat-card {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+
+        .stat-card h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .stat-number {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 0;
+        }
+
+        /* Help Section Styles */
+        .help-section {
+            margin-bottom: 25px;
+        }
+
+        .help-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .help-section ol,
+        .help-section ul {
+            padding-left: 20px;
+        }
+
+        .help-section li {
+            margin-bottom: 5px;
+            color: #555;
+        }
+
+        .help-section strong {
+            color: #333;
+        }
+
+        /* About Content Styles */
+        .about-content h4 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .about-content p {
+            margin-bottom: 10px;
+            color: #555;
+        }
+
+        .about-content a {
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .about-content a:hover {
+            text-decoration: underline;
+        }
+
+        .about-content hr {
+            margin: 20px 0;
+            border: none;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .main-content {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 2rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.15);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
+        }
+
+        .feature-description {
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .admin-section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        }
+
+        .admin-title {
+            font-size: 2rem;
+            color: #2c3e50;
+            margin-bottom: 1rem;
+        }
+
+        .admin-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .admin-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .overlay-links {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .overlay-card {
+            position: relative;
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .overlay-card:hover {
+            border-color: #667eea;
+            background: #667eea;
+        }
+
+        .overlay-link {
+            display: block;
+            padding: 1rem;
+            text-align: center;
+            text-decoration: none;
+            color: #495057;
+            transition: all 0.2s;
+        }
+
+        .overlay-card:hover .overlay-link {
+            color: white;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            border-left: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+            border-radius: 0 8px 0 8px;
+            padding: 0 8px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            opacity: 0.7;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .copy-btn:hover {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            opacity: 1;
+        }
+
+        .overlay-card:hover .copy-btn {
+            opacity: 1;
+        }
+
+        /* Toast Notification Styles */
+        .copy-toast {
+            position: fixed;
+            top: 8px;
+            right: 8px;
+            background: #28a745;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            z-index: 10000;
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            max-width: 180px;
+        }
+
+        .copy-toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-content {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .toast-icon {
+            font-size: 12px;
+        }
+
+        .toast-text {
+            font-size: 11px;
+            font-weight: 400;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0.3rem 0.8rem;
+            }
+            
+            .header-content {
+                flex-direction: row;
+                gap: 0.5rem;
+            }
+
+            .brand-logo {
+                font-size: 1.2rem;
+            }
+
+            .brand-name {
+                font-size: 1rem;
+            }
+
+            .user-info {
+                flex-direction: row;
+                gap: 0.3rem;
+            }
+
+            .user-menu-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .logout-btn {
+                padding: 4px 8px;
+                font-size: 12px;
+            }
+
+            .main-content {
+                padding: 0 1rem;
+                margin: 1rem auto;
+            }
+
+            .welcome-title {
+                font-size: 1.8rem;
+            }
+
+            .welcome-subtitle {
+                font-size: 1rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .overlay-links {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.8rem;
+            }
+
+            .overlay-link {
+                padding: 0.8rem;
+                font-size: 14px;
+            }
+
+            .copy-btn {
+                padding: 0 10px;
+                font-size: 14px;
+            }
+
+            .copy-toast {
+                top: 6px;
+                right: 6px;
+                left: 6px;
+                max-width: none;
+                padding: 5px 10px;
+                transform: translateY(-100%);
+            }
+
+            .copy-toast.show {
+                transform: translateY(0);
+            }
+
+            .toast-icon {
+                font-size: 10px;
+            }
+
+            .toast-text {
+                font-size: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 0.25rem 0.6rem;
+            }
+
+            .brand-name {
+                font-size: 0.9rem;
+            }
+
+            .user-menu-btn {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+
+            .logout-btn {
+                padding: 3px 6px;
+                font-size: 11px;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+            }
+
+            .overlay-links {
+                grid-template-columns: 1fr;
+            }
+
+            .copy-btn {
+                padding: 0 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="brand">
+                <div class="brand-logo">🏆</div>
+                <div class="brand-name">Overlio.com</div>
+            </div>
+            <div class="user-info">
+                <div class="user-menu">
+                    <button class="user-menu-btn" onclick="toggleUserMenu()">
+                        <span id="userDisplay">User: Loading...</span>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-item" onclick="showChangePassword()">
+                            <span class="icon">🔐</span>
+                            Đổi mật khẩu
+                        </div>
+                        <div class="dropdown-item" onclick="showAccountSettings()">
+                            <span class="icon">⚙️</span>
+                            Cài đặt tài khoản
+                        </div>
+                        <div class="dropdown-item" onclick="showUsageStats()">
+                            <span class="icon">📊</span>
+                            Thống kê sử dụng
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item" onclick="showHelp()">
+                            <span class="icon">❓</span>
+                            Trợ giúp
+                        </div>
+                        <div class="dropdown-item" onclick="showAbout()">
+                            <span class="icon">ℹ️</span>
+                            Thông tin
+                        </div>
+                    </div>
+                </div>
+                <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <section class="admin-section">
+            <h2 class="admin-title">Bảng điều khiển Admin</h2>
+            <p style="margin-bottom: 2rem; color: #7f8c8d;">Truy cập vào bảng điều khiển để quản lý toàn bộ hệ thống</p>
+            <a href="#" class="admin-btn" onclick="goToAdmin()">Mở Admin Panel</a>
+
+            <div class="overlay-links">
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('scoreboard')">📊 Scoreboard</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('scoreboard')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('lineup')">👥 Đội hình</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('lineup')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('lineup-home')">🏠 Đội hình nhà</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('lineup-home')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('lineup-away')">✈️ Đội hình khách</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('lineup-away')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('cards')">🟡 Thẻ</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('cards')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('goal')">⚽ Bàn thắng</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('goal')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('substitution')">🔄 Thay người</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('substitution')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('replay')">🎬 Replay</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('replay')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('instant-replay')">⚡ Instant Replay</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('instant-replay')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('sponsor')">💼 Nhà tài trợ</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('sponsor')" title="Sao chép link">📋</button>
+                </div>
+                <div class="overlay-card">
+                    <a href="#" class="overlay-link" onclick="goToOverlay('penalty')">🎯 Penalty</a>
+                    <button class="copy-btn" onclick="copyOverlayLink('penalty')" title="Sao chép link">📋</button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Change Password Modal -->
+    <div id="changePasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">🔐 Đổi mật khẩu</h3>
+                <span class="close" onclick="closeModal('changePasswordModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Mật khẩu hiện tại:</label>
+                    <input type="password" id="currentPassword" placeholder="Nhập mật khẩu hiện tại">
+                </div>
+                <div class="form-group">
+                    <label>Mật khẩu mới:</label>
+                    <input type="password" id="newPassword" placeholder="Nhập mật khẩu mới">
+                </div>
+                <div class="form-group">
+                    <label>Xác nhận mật khẩu mới:</label>
+                    <input type="password" id="confirmPassword" placeholder="Nhập lại mật khẩu mới">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('changePasswordModal')">Hủy</button>
+                <button class="btn btn-success" onclick="changePassword()">Đổi mật khẩu</button>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Account Settings Modal -->
+    <div id="accountSettingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">⚙️ Cài đặt tài khoản</h3>
+                <span class="close" onclick="closeModal('accountSettingsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Tên hiển thị:</label>
+                    <input type="text" id="displayName" placeholder="Nhập tên hiển thị">
+                </div>
+                <div class="form-group">
+                    <label>Email:</label>
+                    <input type="email" id="userEmail" placeholder="Nhập email">
+                </div>
+                <div class="form-group">
+                    <label>Ngôn ngữ:</label>
+                    <select id="userLanguage">
+                        <option value="vi">Tiếng Việt</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Múi giờ:</label>
+                    <select id="userTimezone">
+                        <option value="Asia/Ho_Chi_Minh">Việt Nam (GMT+7)</option>
+                        <option value="UTC">UTC</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('accountSettingsModal')">Hủy</button>
+                <button class="btn btn-success" onclick="saveAccountSettings()">Lưu cài đặt</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Usage Stats Modal -->
+    <div id="usageStatsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">📊 Thống kê sử dụng</h3>
+                <span class="close" onclick="closeModal('usageStatsModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h4>Trận đấu đã tạo</h4>
+                        <p class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Thời gian sử dụng</h4>
+                        <p class="stat-number">0 giờ</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Overlay đã sử dụng</h4>
+                        <p class="stat-number">0</p>
+                    </div>
+                    <div class="stat-card">
+                        <h4>Ngày đăng ký</h4>
+                        <p class="stat-number">Chưa có</p>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('usageStatsModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="helpModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">❓ Trợ giúp</h3>
+                <span class="close" onclick="closeModal('helpModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h4>🎮 Cách sử dụng cơ bản</h4>
+                    <ol>
+                        <li>Nhập tên đội và màu sắc</li>
+                        <li>Cập nhật tỷ số</li>
+                        <li>Điều chỉnh thời gian</li>
+                        <li>Hiển thị overlay khi cần</li>
+                    </ol>
+                </div>
+                <div class="help-section">
+                    <h4>⌨️ Phím tắt</h4>
+                    <ul>
+                        <li><strong>Ctrl+1:</strong> Tăng điểm đội trái</li>
+                        <li><strong>Ctrl+2:</strong> Tăng điểm đội phải</li>
+                        <li><strong>Ctrl+R:</strong> Reset tỷ số</li>
+                        <li><strong>Ctrl+T:</strong> Cập nhật đội</li>
+                    </ul>
+                </div>
+                <div class="help-section">
+                    <h4>📞 Liên hệ hỗ trợ</h4>
+                    <p>Email: kultomb@gmail.com<br>
+                    Hotline: 0989439993<br>
+                    Zalo: 0989439993</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('helpModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- About Modal -->
+    <div id="aboutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">ℹ️ Thông tin</h3>
+                <span class="close" onclick="closeModal('aboutModal')">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="about-content">
+                    <h4>Live Scoreboard by Overlio</h4>
+                    <p><strong>Phiên bản:</strong> 1.0.0</p>
+                    <p><strong>Nhà phát triển:</strong> Overlio Teams</p>
+                    <p><strong>Website:</strong> <a href="https://hascore.com" target="_blank">overlio.com</a></p>
+                    <p><strong>Email:</strong> kultomb@gmail.com</p>
+                    <hr>
+                    <p>Hệ thống scoreboard trực tiếp chuyên nghiệp cho các trận đấu bóng đá, bóng rổ và các môn thể thao khác.</p>
+                    <p>© 2025 Overlio.com. All rights reserved.</p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('aboutModal')">Đóng</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Lấy tenant ID từ URL
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Kiểm tra authentication khi load trang
+        async function checkAuthentication() {
+            const savedTenantId = localStorage.getItem('tenantId');
+            const savedUsername = localStorage.getItem('username');
+            
+            if (!savedTenantId || !savedUsername || savedTenantId !== tenantId) {
+                // Không có thông tin đăng nhập hoặc tenant ID không khớp
+                window.location.href = '/login';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/check-auth', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ tenantId: savedTenantId, username: savedUsername })
+                });
+                
+                const result = await response.json();
+                
+                if (!result.authenticated) {
+                    // Không authenticated, chuyển về login
+                    localStorage.removeItem('tenantId');
+                    localStorage.removeItem('username');
+                    window.location.href = '/login';
+                    return;
+                }
+                
+                // Authentication thành công, cập nhật UI
+                document.getElementById('userDisplay').textContent = `User: ${savedUsername}`;
+                
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                window.location.href = '/login';
+            }
+        }
+        
+        // Chạy kiểm tra authentication khi load trang
+        checkAuthentication();
+
+        // Các hàm điều hướng
+        function goToAdmin() {
+            window.open(`/${tenantId}/admin`, '_blank');
+        }
+
+        function goToOverlay(type) {
+            window.open(`/${tenantId}/${type}`, '_blank');
+        }
+
+        // Hàm copy overlay link
+        async function copyOverlayLink(type) {
+            const overlayUrl = `${window.location.origin}/${tenantId}/${type}`;
+            
+            try {
+                await navigator.clipboard.writeText(overlayUrl);
+                showCopySuccess();
+                
+            } catch (err) {
+                // Fallback cho trình duyệt cũ
+                const textArea = document.createElement('textarea');
+                textArea.value = overlayUrl;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                
+                showCopySuccess();
+            }
+        }
+
+        // Hàm hiển thị thông báo copy thành công
+        function showCopySuccess() {
+            // Tạo toast notification
+            const toast = document.createElement('div');
+            toast.className = 'copy-toast';
+            toast.innerHTML = `
+                <div class="toast-content">
+                    <span class="toast-icon">✅</span>
+                    <span class="toast-text">Đã sao chép link thành công!</span>
+                </div>
+            `;
+            
+            document.body.appendChild(toast);
+            
+            // Hiển thị toast
+            setTimeout(() => {
+                toast.classList.add('show');
+            }, 100);
+            
+            // Ẩn toast sau 1.5 giây
+            setTimeout(() => {
+                toast.classList.remove('show');
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, 1500);
+        }
+
+        // User Menu Functions
+        function toggleUserMenu() {
+            const userMenu = document.querySelector('.user-menu');
+            const dropdown = document.getElementById('userDropdown');
+            
+            if (userMenu.classList.contains('active')) {
+                userMenu.classList.remove('active');
+                dropdown.style.display = 'none';
+            } else {
+                userMenu.classList.add('active');
+                dropdown.style.display = 'block';
+            }
+        }
+
+        // Close user menu when clicking outside
+        document.addEventListener('click', (e) => {
+            const userMenu = document.querySelector('.user-menu');
+            if (!userMenu.contains(e.target)) {
+                userMenu.classList.remove('active');
+                document.getElementById('userDropdown').style.display = 'none';
+            }
+        });
+
+        // Modal Functions
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                // Close user menu
+                document.querySelector('.user-menu').classList.remove('active');
+                document.getElementById('userDropdown').style.display = 'none';
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                // Clear form fields
+                const inputs = modal.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => input.value = '');
+            }
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+
+        // Menu Item Functions
+        function showChangePassword() {
+            showModal('changePasswordModal');
+        }
+
+        function showAccountSettings() {
+            // Load current user settings
+            const displayName = document.getElementById('displayName');
+            const userEmail = document.getElementById('userEmail');
+            
+            if (displayName) displayName.value = tenantId || '';
+            if (userEmail) userEmail.value = localStorage.getItem('userEmail') || '';
+            
+            showModal('accountSettingsModal');
+        }
+
+        function showUsageStats() {
+            showModal('usageStatsModal');
+        }
+
+        function showHelp() {
+            showModal('helpModal');
+        }
+
+        function showAbout() {
+            showModal('aboutModal');
+        }
+
+        // Action Functions
+        async function changePassword() {
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!currentPassword || !newPassword || !confirmPassword) {
+                alert('Vui lòng điền đầy đủ thông tin');
+                return;
+            }
+            
+            if (newPassword !== confirmPassword) {
+                alert('Mật khẩu mới không khớp');
+                return;
+            }
+            
+            if (newPassword.length < 6) {
+                alert('Mật khẩu mới phải có ít nhất 6 ký tự');
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/change-password', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ currentPassword, newPassword, tenantId })
+                });
+                
+                const result = await response.json();
+                
+                if (response.ok) {
+                    alert(result.message || 'Đổi mật khẩu thành công! Vui lòng đăng nhập lại.');
+                    closeModal('changePasswordModal');
+                    // Logout sau khi đổi mật khẩu thành công
+                    setTimeout(() => {
+                        logout();
+                    }, 1500);
+                } else {
+                    alert(result.error || 'Đổi mật khẩu thất bại!');
+                }
+            } catch (error) {
+                console.error('Error changing password:', error);
+                alert('Có lỗi kết nối máy chủ! Vui lòng thử lại.');
+            }
+        }
+
+        async function saveAccountSettings() {
+            const displayName = document.getElementById('displayName').value;
+            const userEmail = document.getElementById('userEmail').value;
+            const userLanguage = document.getElementById('userLanguage').value;
+            const userTimezone = document.getElementById('userTimezone').value;
+            
+            if (!displayName) {
+                alert('Vui lòng nhập tên hiển thị');
+                return;
+            }
+            
+            try {
+                // Save to localStorage
+                localStorage.setItem('userEmail', userEmail);
+                localStorage.setItem('userLanguage', userLanguage);
+                localStorage.setItem('userTimezone', userTimezone);
+                
+                alert('Lưu cài đặt thành công!');
+                closeModal('accountSettingsModal');
+            } catch (error) {
+                alert('Có lỗi xảy ra khi lưu cài đặt');
+            }
+        }
+
+        // Hàm logout
+        async function logout() {
+            try {
+                // Clear localStorage
+                localStorage.removeItem('tenantId');
+                localStorage.removeItem('username');
+                
+                const response = await fetch('/api/logout', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+                
+                if (response.ok) {
+                    window.location.href = '/login';
+                } else {
+                    console.error('Logout failed');
+                    window.location.href = '/login';
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                // Clear localStorage and redirect even if server call fails
+                localStorage.removeItem('tenantId');
+                localStorage.removeItem('username');
+                window.location.href = '/login';
+            }
+        }
+    </script>
+</body>
+</html> 

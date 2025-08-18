@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Super Admin - Overlio Live Scoreboard</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Quản lý hệ thống Overlio Live Scoreboard - Super Admin Panel">
+    <meta name="keywords" content="super admin, overlio, quản lý hệ thống, live scoreboard">
+    <meta name="author" content="Overlio Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Super Admin - Overlio Live Scoreboard">
+    <meta property="og:description" content="Quản lý hệ thống Overlio Live Scoreboard - Super Admin Panel">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://overlio.com/superadmin">
+    <meta property="og:site_name" content="Overlio">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="canonical" href="https://overlio.com/superadmin">
+    
+  <style>
+    :root {
+      --primary: #6f42c1;
+      --primary-dark: #4b2992;
+      --secondary: #667eea;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --info: #17a2b8;
+      --light: #f8f9fa;
+      --dark: #2c3e50;
+      --border: #e1e8ed;
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(44,62,80,0.10);
+    }
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      color: var(--dark);
+    }
+    .header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 64px;
+      background: rgba(255,255,255,0.98);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 100;
+    }
+    .header .logo {
+      display: flex;
+      align-items: center;
+      font-size: 1.5em;
+      font-weight: bold;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+    .header .logo span {
+      font-size: 1.3em;
+      margin-right: 10px;
+    }
+    .header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .header .username {
+      color: var(--primary-dark);
+      font-weight: 600;
+      font-size: 1em;
+    }
+    .header .logout-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 24px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .header .logout-btn:hover {
+      background: #c0392b;
+    }
+
+
+    .main {
+      margin-top: 80px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 80vh;
+      padding: 24px 8px 32px 8px;
+    }
+    .card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 32px 28px 28px 28px;
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .card-title {
+      font-size: 2em;
+      font-weight: bold;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-align: left;
+    }
+    .actions-bar {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 8px;
+    }
+    .create-btn {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 10px 22px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+      box-shadow: 0 2px 8px rgba(111,66,193,0.08);
+    }
+    .create-btn:hover {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+    }
+    .info-box, .error-box {
+      padding: 12px 18px;
+      border-radius: 8px;
+      font-size: 1.08em;
+      margin-bottom: 8px;
+      display: none;
+    }
+    .info-box {
+      background: #eaf0fb;
+      border: 1px solid #b3c6e7;
+      color: var(--primary-dark);
+    }
+    .error-box {
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      color: var(--danger);
+    }
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: #fff;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 1px 4px rgba(44,62,80,0.06);
+    }
+    thead {
+      background: linear-gradient(90deg, var(--secondary) 0%, var(--primary) 100%);
+      color: #fff;
+    }
+    th, td {
+      padding: 14px 16px;
+      text-align: left;
+      font-size: 1.08em;
+    }
+    th {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    tbody tr {
+      border-bottom: 1px solid var(--border);
+      transition: background 0.15s;
+    }
+    tbody tr:nth-child(even) {
+      background: #f8f9fa;
+    }
+    tbody tr:hover {
+      background: #f3f0fa;
+    }
+    .badge {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 0.98em;
+      font-weight: 500;
+      color: #fff;
+      background: var(--success);
+      margin-right: 4px;
+    }
+    .badge.offline {
+      background: var(--danger);
+    }
+    .tenant-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .btn {
+      border: none;
+      border-radius: 6px;
+      padding: 7px 16px;
+      font-size: 1em;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-bottom: 2px;
+    }
+    .btn.copy { background: var(--info); color: #fff; }
+    .btn.copy:hover { background: #138496; }
+    .btn.edit { background: var(--warning); color: #fff; }
+    .btn.edit:hover { background: #e67e22; }
+    .btn.delete { background: var(--danger); color: #fff; }
+    .btn.delete:hover { background: #c0392b; }
+    .edit-form, .confirm-delete {
+      background: #f8f9fa;
+      border-radius: 10px;
+      padding: 18px 24px;
+      margin: 12px 0;
+      box-shadow: 0 1px 4px rgba(102,126,234,0.08);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .edit-form label {
+      font-size: 1.08em;
+      color: var(--dark);
+      font-weight: 500;
+    }
+    .edit-form input {
+      padding: 10px 12px;
+      border: 2px solid #ddd;
+      border-radius: 6px;
+      font-size: 1.08em;
+      background: #fff;
+    }
+    .edit-form .form-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .edit-form .save-btn {
+      background: var(--success);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 1.08em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .edit-form .save-btn:hover {
+      background: #229954;
+    }
+    .edit-form .cancel-btn {
+      background: #e1e8ed;
+      color: var(--primary-dark);
+      border: none;
+      border-radius: 6px;
+      padding: 10px 20px;
+      font-size: 1.08em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .edit-form .cancel-btn:hover {
+      background: #b3c6e7;
+    }
+    .confirm-delete {
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      border-radius: 8px;
+      padding: 14px 18px;
+      margin-bottom: 8px;
+      color: var(--danger);
+      font-size: 1.08em;
+      word-break: break-all;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      justify-content: space-between;
+    }
+    .confirm-delete .yes-btn {
+      background: var(--danger);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1.08em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .confirm-delete .no-btn {
+      background: #e1e8ed;
+      color: var(--primary-dark);
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1.08em;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    @media (max-width: 900px) {
+      .main { padding: 8px 0; }
+      .card { padding: 16px 4px 12px 4px; }
+      .header { padding: 0 10px; }
+    }
+    @media (max-width: 600px) {
+      .header { height: 54px; padding: 0 4px; }
+      .main { margin-top: 62px; }
+      .card-title { font-size: 1.2em; }
+      th, td { padding: 8px 6px; font-size: 0.98em; }
+      .card { padding: 8px 0 8px 0; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo">
+      <span>👑</span>
+      Super Admin
+    </div>
+    <div class="user-info">
+      <span class="username" id="username">Super Admin</span>
+      <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+      <button class="logout-btn" onclick="showChangePasswordModal()" style="background: #17a2b8; margin-left: 10px;">🔐 Đổi MK</button>
+    </div>
+  </div>
+
+  <!-- Change Password Modal -->
+  <div id="changePasswordModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+    <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 30px; border-radius: 10px; width: 400px; max-width: 90%;">
+      <h3 style="margin: 0 0 20px 0; color: #17a2b8;">🔐 Thay đổi mật khẩu</h3>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mật khẩu hiện tại:</label>
+        <input type="password" id="currentPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Mật khẩu mới:</label>
+        <input type="password" id="newPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" oninput="checkPasswordStrength()">
+        <div id="passwordStrength" style="margin-top: 5px; font-size: 0.9em;"></div>
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label style="display: block; margin-bottom: 5px; font-weight: bold;">Xác nhận mật khẩu mới:</label>
+        <input type="password" id="confirmPassword" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" oninput="checkPasswordMatch()">
+        <div id="passwordMatch" style="margin-top: 5px; font-size: 0.9em;"></div>
+      </div>
+      
+      <div id="passwordError" style="color: #e74c3c; margin-bottom: 15px; display: none;"></div>
+      
+      <div style="text-align: right;">
+        <button onclick="hideChangePasswordModal()" style="padding: 8px 16px; margin-right: 10px; border: 1px solid #ddd; background: #f8f9fa; border-radius: 4px; cursor: pointer;">Hủy</button>
+        <button onclick="changePassword()" style="padding: 8px 16px; background: #17a2b8; color: white; border: none; border-radius: 4px; cursor: pointer;">Thay đổi</button>
+      </div>
+    </div>
+  </div>
+  <div class="main">
+    <div class="card">
+                      <div class="card-title">👑 Overlio Super Admin</div>
+      
+      <div class="actions-bar">
+        <button class="create-btn" onclick="createTenant()">➕ Tạo Khách Hàng</button>
+      </div>
+      
+      <div class="info-box" id="infoBox"></div>
+      <div class="error-box" id="errorBox"></div>
+      
+      <!-- Security Panel -->
+      <div class="security-panel" style="margin-bottom: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #17a2b8;">
+        <h3 style="margin: 0 0 10px 0; color: #17a2b8;">🛡️ Security Status</h3>
+        <div id="securityInfo" style="font-size: 0.9em; color: #666;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+            <div>
+              <div>📊 Rate Limit: <span id="rateLimitStatus">Loading...</span></div>
+              <div>🚫 Blocked IPs: <span id="blockedIPsCount">Loading...</span></div>
+              <div>🔒 Active Attempts: <span id="activeAttemptsCount">Loading...</span></div>
+              <div>🕒 Last Login: <span id="lastLoginTime">Loading...</span></div>
+            </div>
+            <div>
+              <div>🖥️ Session: <span id="sessionStatus">Loading...</span></div>
+              <div>🔐 Fingerprint: <span id="fingerprintStatus">Loading...</span></div>
+              <div>⏱️ Uptime: <span id="uptimeStatus">Loading...</span></div>
+              <div>💾 Memory: <span id="memoryStatus">Loading...</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Trạng thái</th>
+              <th>Mã KH</th>
+              <th>Tên khách hàng</th>
+              <th>Username</th>
+              <th>Ngày tạo</th>
+              <th>Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="tenantTableBody">
+            <tr>
+              <td colspan="6" style="text-align: center; padding: 20px;">Đang tải...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    let tenants = [];
+    let onlineTenants = [];
+    let editingId = null;
+    let deletingId = null;
+    let isRedirecting = false; // Flag để tránh redirect liên tục
+    let lastAuthCheck = 0; // Timestamp của lần check auth cuối cùng
+    const AUTH_CHECK_INTERVAL = 5000; // Chỉ check auth mỗi 5 giây
+
+    // Kiểm tra authentication khi trang load
+    async function checkAuth() {
+      // Debounce auth checks để tránh gọi quá nhiều
+      const now = Date.now();
+      if (now - lastAuthCheck < AUTH_CHECK_INTERVAL) {
+        // Trả về kết quả cache nếu vừa check gần đây
+        return localStorage.getItem('superadminAuthenticated') === 'true';
+      }
+      lastAuthCheck = now;
+      
+      const isAuthenticated = localStorage.getItem('superadminAuthenticated') === 'true';
+      const username = localStorage.getItem('superadminUsername');
+      
+      if (!isAuthenticated || !username) {
+        return false;
+      }
+      
+      // Verify session with server
+      try {
+        const res = await fetch('/api/superadmin/status', {
+          credentials: 'include' // Đảm bảo gửi session cookie
+        });
+        
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            // Authentication failed, clear localStorage but don't redirect immediately
+            localStorage.removeItem('superadminAuthenticated');
+            localStorage.removeItem('superadminUsername');
+            return false;
+          }
+          // Other errors, don't redirect
+          console.error('Session check failed:', res.status, res.statusText);
+          return false;
+        }
+        
+        const data = await res.json();
+        if (!data.authenticated) {
+          localStorage.removeItem('superadminAuthenticated');
+          localStorage.removeItem('superadminUsername');
+          return false;
+        }
+        
+        // Cập nhật username trong header
+        const usernameElement = document.querySelector('.username');
+        if (usernameElement) {
+          usernameElement.textContent = data.username;
+        }
+        
+        return true;
+      } catch (error) {
+        console.error('Session check failed:', error);
+        // Network error, don't redirect immediately
+        return false;
+      }
+    }
+
+    // Kiểm tra authentication khi trang load
+    (async function() {
+      if (isRedirecting) return; // Tránh redirect liên tục
+      
+      const isAuthenticated = await checkAuth();
+      if (!isAuthenticated) {
+        // Chỉ redirect nếu không phải đang ở trang login và chưa redirect
+        if (window.location.pathname !== '/superadmin-login' && !isRedirecting) {
+          isRedirecting = true;
+          window.location.href = '/superadmin-login';
+        }
+        return;
+      }
+    })();
+
+    // Load security information
+    async function loadSecurityInfo() {
+      try {
+        const res = await fetch('/api/superadmin/security-status', {
+          credentials: 'include'
+        });
+        if (res.ok) {
+          const data = await res.json();
+          
+          // Basic info
+          document.getElementById('rateLimitStatus').textContent = 
+            `${data.rateLimit.remainingAttempts}/${data.rateLimit.attempts} attempts`;
+          document.getElementById('blockedIPsCount').textContent = data.system.blockedIPsCount;
+          document.getElementById('activeAttemptsCount').textContent = data.system.activeAttemptsCount;
+          
+          // Session info
+          document.getElementById('sessionStatus').textContent = 
+            data.session.authenticated ? 'Active' : 'Inactive';
+          document.getElementById('fingerprintStatus').textContent = 
+            data.session.fingerprint === 'valid' ? 'Valid' : 'Invalid';
+          
+          // System info
+          const uptimeHours = Math.floor(data.system.uptime / 3600);
+          const uptimeMinutes = Math.floor((data.system.uptime % 3600) / 60);
+          document.getElementById('uptimeStatus').textContent = 
+            `${uptimeHours}h ${uptimeMinutes}m`;
+          
+          const memoryMB = Math.round(data.system.memoryUsage.heapUsed / 1024 / 1024);
+          document.getElementById('memoryStatus').textContent = `${memoryMB} MB`;
+          
+          if (data.session.lastLogin) {
+            const lastLogin = new Date(data.session.lastLogin);
+            document.getElementById('lastLoginTime').textContent = 
+              lastLogin.toLocaleString('vi-VN');
+          } else {
+            document.getElementById('lastLoginTime').textContent = 'N/A';
+          }
+          
+          // Color coding for status
+          if (data.rateLimit.isBlocked) {
+            document.getElementById('rateLimitStatus').style.color = '#e74c3c';
+          } else if (data.rateLimit.remainingAttempts <= 2) {
+            document.getElementById('rateLimitStatus').style.color = '#f39c12';
+          } else {
+            document.getElementById('rateLimitStatus').style.color = '#27ae60';
+          }
+          
+          if (data.session.fingerprint === 'valid') {
+            document.getElementById('fingerprintStatus').style.color = '#27ae60';
+          } else {
+            document.getElementById('fingerprintStatus').style.color = '#e74c3c';
+          }
+        }
+      } catch (error) {
+        console.error('Error loading security info:', error);
+      }
+    }
+
+    // Auto-logout on security threats
+    function checkSecurityThreats() {
+      const sessionStatus = document.getElementById('sessionStatus');
+      const fingerprintStatus = document.getElementById('fingerprintStatus');
+      
+      if (sessionStatus && fingerprintStatus) {
+        if (sessionStatus.textContent === 'Inactive' || 
+            fingerprintStatus.textContent === 'Invalid') {
+          
+          showError('Phát hiện mối đe dọa bảo mật. Đang đăng xuất...');
+          
+          setTimeout(() => {
+            localStorage.removeItem('superadminAuthenticated');
+            localStorage.removeItem('superadminUsername');
+            window.location.href = '/superadmin-login';
+          }, 2000);
+        }
+      }
+    }
+
+    // Auto-refresh tenants list every 30 seconds
+    setInterval(async () => {
+      if (isRedirecting) return; // Tránh check auth khi đang redirect
+      
+      try {
+        const isAuthenticated = await checkAuth();
+        if (isAuthenticated) {
+          fetchTenants();
+          loadSecurityInfo();
+          checkSecurityThreats();
+        } else {
+          // Chỉ redirect nếu localStorage cũng không có thông tin auth
+          const localAuth = localStorage.getItem('superadminAuthenticated') === 'true';
+          if (!localAuth && !isRedirecting) {
+            isRedirecting = true;
+            window.location.href = '/superadmin-login';
+          }
+        }
+      } catch (error) {
+        console.error('Auto-refresh error:', error);
+        // Không redirect khi có lỗi network
+      }
+    }, 30000);
+
+    // Add manual refresh button functionality
+    function addRefreshButton() {
+      const actionsBar = document.querySelector('.actions-bar');
+      if (actionsBar) {
+        const refreshBtn = document.createElement('button');
+        refreshBtn.className = 'create-btn';
+        refreshBtn.style.marginRight = '10px';
+        refreshBtn.innerHTML = '🔄 Làm mới';
+        refreshBtn.onclick = async () => {
+          try {
+            const isAuthenticated = await checkAuth();
+            if (isAuthenticated && !isRedirecting) {
+              fetchTenants();
+              loadSecurityInfo();
+            }
+          } catch (error) {
+            console.error('Manual refresh error:', error);
+            showError('Lỗi khi làm mới dữ liệu');
+          }
+        };
+        actionsBar.insertBefore(refreshBtn, actionsBar.firstChild);
+      }
+    }
+
+    // Initialize refresh button
+    addRefreshButton();
+    
+    // Load initial data
+    loadSecurityInfo();
+    
+    // Reset redirect flag khi trang load thành công
+    isRedirecting = false;
+    
+    // Connect to Socket.IO for real-time updates
+    const socket = io();
+    
+    // Listen for tenant online status
+    socket.on('tenant-online', (data) => {
+      console.log('Tenant online received:', data);
+      if (data.tenantId && !onlineTenants.includes(data.tenantId)) {
+        onlineTenants.push(data.tenantId);
+        renderTenants();
+      }
+    });
+    
+    // Listen for tenant offline status
+    socket.on('tenant-offline', (data) => {
+      console.log('Tenant offline received:', data);
+      if (data.tenantId) {
+        onlineTenants = onlineTenants.filter(id => id !== data.tenantId);
+        renderTenants();
+      }
+    });
+    
+    // Listen for initial tenant status
+    socket.on('initial-tenant-status', (onlineTenantIds) => {
+      console.log('Initial tenant status received:', onlineTenantIds);
+      onlineTenants = onlineTenantIds || [];
+      renderTenants();
+    });
+
+    async function fetchTenants() {
+      try {
+        // Show loading state
+        const tbody = document.getElementById('tenantTableBody');
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">Đang tải...</td></tr>';
+        
+        const res = await fetch('/api/tenants', {
+          credentials: 'include' // Đảm bảo gửi session cookie
+        });
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            // Authentication failed, redirect to login
+            localStorage.removeItem('superadminAuthenticated');
+            localStorage.removeItem('superadminUsername');
+            window.location.href = '/superadmin-login';
+            return;
+          }
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        tenants = await res.json();
+        // Extract online tenants from the response
+        onlineTenants = tenants.filter(t => t.online).map(t => t.id);
+        renderTenants();
+      } catch (e) {
+        console.error('Error fetching tenants:', e);
+        showError(`Lỗi kết nối: ${e.message}`);
+        
+        // Show error state in table
+        const tbody = document.getElementById('tenantTableBody');
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 20px; color: #e74c3c;">Lỗi tải dữ liệu: ${e.message}</td></tr>`;
+        
+        // Retry after 5 seconds if it's a network error
+        if (e.name === 'TypeError' || e.message.includes('fetch')) {
+          setTimeout(async () => {
+            try {
+              const isAuthenticated = await checkAuth();
+              if (isAuthenticated && !isRedirecting) {
+                fetchTenants();
+              }
+            } catch (retryError) {
+              console.error('Retry failed:', retryError);
+            }
+          }, 5000);
+        }
+      }
+    }
+
+    function renderTenants() {
+      const tbody = document.getElementById('tenantTableBody');
+      tbody.innerHTML = '';
+      tenants.forEach(t => {
+        if (editingId === t.id) {
+          tbody.appendChild(renderEditForm(t));
+        } else if (deletingId === t.id) {
+          tbody.appendChild(renderDeleteConfirm(t));
+        } else {
+          const tr = document.createElement('tr');
+          const isOnline = onlineTenants.includes(t.id);
+          const status = t.status || 'approved';
+          const statusBadge = status === 'pending' ? 
+            '<span class="badge" style="background: #f39c12;">Pending</span>' : 
+            `<span class="badge ${isOnline ? '' : 'offline'}">${isOnline ? 'Online' : 'Offline'}</span>`;
+          
+          tr.innerHTML = `
+            <td>${statusBadge}</td>
+            <td><b>${t.id}</b></td>
+            <td>${t.name || 'N/A'}</td>
+            <td>${t.username}</td>
+            <td>${t.createdAt ? new Date(t.createdAt).toLocaleString() : ''}</td>
+            <td class="tenant-actions">
+              ${status === 'pending' ? 
+                `<button class="btn" style="background: #27ae60; color: #fff;" onclick="approveTenant('${t.id}')">Duyệt</button>` : 
+                ''
+              }
+              <button class="btn copy" onclick="copyLogin('${t.id}', '${t.username}')">Copy</button>
+              <button class="btn edit" onclick="startEdit('${t.id}')">Sửa</button>
+              <button class="btn delete" onclick="startDelete('${t.id}')">Xóa</button>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        }
+      });
+    }
+
+    function copyLogin(id, username) {
+      const link = `${window.location.origin}/${id}/admin`;
+      const info = `User: ${id}\nUsername: ${username}\nLink: ${link}`;
+      navigator.clipboard.writeText(info);
+      showInfo('Đã copy thông tin đăng nhập (không có mật khẩu, chỉ copy được khi tạo mới)!');
+    }
+
+    function startEdit(id) {
+      editingId = id;
+      deletingId = null;
+      renderTenants();
+    }
+    function startDelete(id) {
+      deletingId = id;
+      editingId = null;
+      renderTenants();
+    }
+    function cancelEdit() {
+      editingId = null;
+      renderTenants();
+    }
+    function cancelDelete() {
+      deletingId = null;
+      renderTenants();
+    }
+    function renderEditForm(t) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      const form = document.createElement('form');
+      form.className = 'edit-form';
+      form.onsubmit = async e => {
+        e.preventDefault();
+        const name = form.querySelector('[name=name]').value;
+        const password = form.querySelector('[name=password]').value;
+        try {
+          const res = await fetch(`/api/tenants/${t.id}`, {
+            method: 'PATCH',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify({ name, password: password || undefined })
+          });
+          if (!res.ok) throw new Error('Không thể cập nhật');
+          showInfo('Đã cập nhật khách hàng!');
+          editingId = null;
+          fetchTenants();
+        } catch (e) {
+          showError(e.message);
+        }
+      };
+      form.innerHTML = `
+        <label>Tên khách hàng:
+          <input name="name" type="text" value="${t.name || ''}" required />
+        </label>
+        <label>Mật khẩu mới (bỏ trống nếu không đổi):
+          <input name="password" type="password" placeholder="Mật khẩu mới" />
+        </label>
+        <div class="form-actions">
+          <button type="submit" class="save-btn">Lưu</button>
+          <button type="button" class="cancel-btn" onclick="cancelEdit()">Hủy</button>
+        </div>
+      `;
+      td.appendChild(form);
+      tr.appendChild(td);
+      return tr;
+    }
+    function renderDeleteConfirm(t) {
+      const tr = document.createElement('tr');
+      const td = document.createElement('td');
+      td.colSpan = 5;
+      td.innerHTML = `
+        <div class="confirm-delete">
+          <span>Bạn có chắc muốn xóa khách hàng <b>${t.id}</b> không?</span>
+          <div>
+            <button class="yes-btn" onclick="confirmDelete('${t.id}')">Xóa</button>
+            <button class="no-btn" onclick="cancelDelete()">Hủy</button>
+          </div>
+        </div>
+      `;
+      tr.appendChild(td);
+      return tr;
+    }
+    async function approveTenant(id) {
+      const tenant = tenants.find(t => t.id === id);
+      if (!tenant) return;
+      
+      if (!confirm(`Bạn có chắc muốn duyệt khách hàng "${tenant.name}" (${id})?`)) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/tenants/${id}`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ approve: true })
+        });
+        
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('superadminAuthenticated');
+            localStorage.removeItem('superadminUsername');
+            window.location.href = '/superadmin-login';
+            return;
+          }
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        showInfo('Đã duyệt khách hàng! Họ có thể đăng nhập ngay bây giờ.');
+        fetchTenants();
+      } catch (e) {
+        console.error('Error approving tenant:', e);
+        showError(`Lỗi duyệt tenant: ${e.message}`);
+      }
+    }
+
+    async function confirmDelete(id) {
+      const tenant = tenants.find(t => t.id === id);
+      if (!tenant) return;
+      
+      if (!confirm(`Bạn có chắc muốn xóa khách hàng "${tenant.name}" (${id})?\n\nHành động này không thể hoàn tác!`)) {
+        return;
+      }
+      
+      try {
+        const res = await fetch(`/api/tenants/${id}`, { 
+          method: 'DELETE',
+          credentials: 'include'
+        });
+        
+        if (!res.ok) {
+          if (res.status === 401 || res.status === 403) {
+            localStorage.removeItem('superadminAuthenticated');
+            localStorage.removeItem('superadminUsername');
+            window.location.href = '/superadmin-login';
+            return;
+          }
+          throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+        }
+        
+        showInfo('Đã xóa khách hàng!');
+        deletingId = null;
+        fetchTenants();
+      } catch (e) {
+        console.error('Error deleting tenant:', e);
+        showError(`Lỗi xóa tenant: ${e.message}`);
+      }
+    }
+    function showInfo(msg) {
+      const box = document.getElementById('infoBox');
+      box.textContent = msg;
+      box.style.display = 'block';
+      document.getElementById('errorBox').style.display = 'none';
+    }
+    function showError(msg) {
+      const box = document.getElementById('errorBox');
+      box.textContent = msg;
+      box.style.display = 'block';
+      document.getElementById('infoBox').style.display = 'none';
+    }
+    function createTenant() {
+      // Tạo khách hàng mới (giao diện đơn giản, có thể nâng cấp modal)
+      const name = prompt('Nhập tên khách hàng mới:');
+      if (!name) return;
+      fetch('/api/tenants', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ name })
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.id && data.username && data.password) {
+            showInfo(`Đã tạo khách hàng!\nMã: ${data.id}\nUser: ${data.username}\nPass: ${data.password}`);
+          } else {
+            showError('Dữ liệu trả về không hợp lệ!');
+          }
+          fetchTenants();
+        })
+        .catch((error) => {
+          console.error('Error creating tenant:', error);
+          showError('Không thể tạo khách hàng!');
+        });
+    }
+    async function logout() {
+      if (confirm('Đăng xuất khỏi Super Admin?')) {
+        isRedirecting = true; // Set flag để tránh redirect liên tục
+        
+        try {
+          // Call logout API
+          await fetch('/api/superadmin/logout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+          });
+        } catch (error) {
+          console.error('Logout error:', error);
+        }
+        
+        // Clear localStorage và redirect
+        localStorage.removeItem('superadminAuthenticated');
+        localStorage.removeItem('superadminUsername');
+        window.location.href = '/superadmin-login';
+      }
+    }
+
+    // Change Password Modal Functions
+    function showChangePasswordModal() {
+      document.getElementById('changePasswordModal').style.display = 'block';
+      document.getElementById('currentPassword').value = '';
+      document.getElementById('newPassword').value = '';
+      document.getElementById('confirmPassword').value = '';
+      document.getElementById('passwordStrength').innerHTML = '';
+      document.getElementById('passwordMatch').innerHTML = '';
+      document.getElementById('passwordError').textContent = '';
+      document.getElementById('passwordError').style.display = 'none';
+    }
+
+    function hideChangePasswordModal() {
+      document.getElementById('changePasswordModal').style.display = 'none';
+    }
+
+    function checkPasswordStrength() {
+      const password = document.getElementById('newPassword').value;
+      const strengthDiv = document.getElementById('passwordStrength');
+      const errorDiv = document.getElementById('passwordError');
+      
+      if (!password) {
+        strengthDiv.innerHTML = ''; // Clear previous feedback
+        errorDiv.style.display = 'none';
+        return;
+      }
+      
+      // Basic strength check
+      let strength = 0;
+      let feedback = [];
+      
+      if (password.length >= 8) strength += 1;
+      if (password.length >= 12) strength += 1;
+      if (password.length >= 16) strength += 1;
+      if (/[a-z]/.test(password)) strength += 1;
+      if (/[A-Z]/.test(password)) strength += 1;
+      if (/\d/.test(password)) strength += 1;
+      if (/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) strength += 1;
+      
+      // Generate feedback
+      if (password.length < 8) feedback.push('Ít nhất 8 ký tự');
+      if (!/[a-z]/.test(password)) feedback.push('Cần chữ thường');
+      if (!/[A-Z]/.test(password)) feedback.push('Cần chữ hoa');
+      if (!/\d/.test(password)) feedback.push('Cần số');
+      if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) feedback.push('Cần ký tự đặc biệt');
+      
+      // Display strength
+      let strengthText = '';
+      let strengthColor = '';
+      
+      if (strength <= 2) {
+        strengthText = 'Rất yếu';
+        strengthColor = '#e74c3c';
+      } else if (strength <= 4) {
+        strengthText = 'Yếu';
+        strengthColor = '#f39c12';
+      } else if (strength <= 6) {
+        strengthText = 'Trung bình';
+        strengthColor = '#f1c40f';
+      } else if (strength <= 7) {
+        strengthText = 'Mạnh';
+        strengthColor = '#27ae60';
+      } else {
+        strengthText = 'Rất mạnh';
+        strengthColor = '#2ecc71';
+      }
+      
+      strengthDiv.innerHTML = `
+        <div style="color: ${strengthColor}; font-weight: bold;">${strengthText}</div>
+        <div style="font-size: 0.8em; color: #666;">
+          ${feedback.length > 0 ? 'Cần cải thiện: ' + feedback.join(', ') : 'Mật khẩu đủ mạnh!'}
+        </div>
+      `;
+      
+      // Clear error if password is strong enough
+      if (strength >= 6 && feedback.length === 0) {
+        errorDiv.style.display = 'none';
+      }
+    }
+
+    function checkPasswordMatch() {
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+      const matchDiv = document.getElementById('passwordMatch');
+      const errorDiv = document.getElementById('passwordError');
+
+      if (newPassword !== confirmPassword) {
+        matchDiv.innerHTML = '<span style="color: #e74c3c; font-weight: bold;">Mật khẩu không khớp!</span>';
+        errorDiv.style.display = 'none'; // Hide other errors
+        return;
+      }
+      matchDiv.innerHTML = '<span style="color: #27ae60; font-weight: bold;">Mật khẩu khớp!</span>';
+      errorDiv.style.display = 'none'; // Hide other errors
+    }
+
+    async function changePassword() {
+      const currentPassword = document.getElementById('currentPassword').value;
+      const newPassword = document.getElementById('newPassword').value;
+      const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if (newPassword !== confirmPassword) {
+        document.getElementById('passwordError').textContent = 'Mật khẩu mới và xác nhận mật khẩu không khớp!';
+        document.getElementById('passwordError').style.display = 'block';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/superadmin/change-password', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ currentPassword, newPassword })
+        });
+
+        // Check if response is JSON
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          // Response is not JSON, likely an HTML error page
+          throw new Error('Server trả về lỗi không hợp lệ. Vui lòng thử lại.');
+        }
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          if (res.status === 401) {
+            // Unauthorized - redirect to login
+            showError('Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.');
+            setTimeout(() => {
+              localStorage.removeItem('superadminAuthenticated');
+              localStorage.removeItem('superadminUsername');
+              window.location.href = '/superadmin-login';
+            }, 2000);
+            return;
+          }
+          
+          if (data.error) {
+            document.getElementById('passwordError').textContent = data.error;
+            if (data.details && Array.isArray(data.details)) {
+              document.getElementById('passwordError').textContent += '\n' + data.details.join('\n');
+            }
+          } else {
+            document.getElementById('passwordError').textContent = `Lỗi thay đổi mật khẩu: ${res.statusText}`;
+          }
+          document.getElementById('passwordError').style.display = 'block';
+          return;
+        }
+
+        showInfo('Đã thay đổi mật khẩu thành công!');
+        hideChangePasswordModal();
+      } catch (e) {
+        console.error('Error changing password:', e);
+        document.getElementById('passwordError').textContent = `Lỗi thay đổi mật khẩu: ${e.message}`;
+        document.getElementById('passwordError').style.display = 'block';
+      }
+    }
+
+
+    fetchTenants();
+  </script>
+</body>
+</html> 

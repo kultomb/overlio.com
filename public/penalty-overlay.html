@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Penalty Overlay</title>
+    <link rel="stylesheet" href="/overlays.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        
+        .penalty-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        
+        .penalty-bar {
+            margin-top: 60px;
+            display: flex;
+            align-items: center;
+            background: linear-gradient(90deg, #0a1e5e 0%, #1a2e6e 50%, #0a1e5e 100%);
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            min-width: 800px;
+            min-height: 120px;
+            max-width: 1200px;
+            width: 70vw;
+            position: relative;
+            padding: 15px 20px;
+        }
+        
+        /* Team colors on corners */
+        .penalty-bar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 8px;
+            height: 100%;
+            background: var(--left-team-color, #ff0000);
+            border-radius: 8px 0 0 8px;
+        }
+        
+        .penalty-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 8px;
+            height: 100%;
+            background: var(--right-team-color, #0066cc);
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .team-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: #fff;
+            justify-content: center;
+        }
+        
+
+        
+        .team-name {
+            font-size: 1.2em;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 0;
+            text-shadow: 1px 1px 4px #000a;
+        }
+        
+        .penalty-dots {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 15px;
+            min-height: 28px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .penalty-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 4px solid #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #fff;
+        }
+        
+        .penalty-dot.goal {
+            background: #28a745;
+            border-color: #28a745;
+        }
+        
+        .penalty-dot.miss {
+            background: #dc3545;
+            border-color: #dc3545;
+        }
+        
+        .penalty-dot.empty {
+            background: transparent;
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .penalty-dot.goal::after {
+            content: '✓';
+            color: #fff;
+        }
+        
+        .penalty-dot.miss::after {
+            content: '✗';
+            color: #fff;
+        }
+        
+
+        
+        .team-section.winner {
+            position: relative;
+        }
+        
+        .team-section.winner::after {
+            content: '🏆';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 2em;
+            animation: trophyBounce 1s ease-in-out infinite;
+            z-index: 1002;
+        }
+        
+        @keyframes trophyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        
+
+        
+        .center-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0 30px;
+            color: #fff;
+        }
+        
+        .penalty-title {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #4fc3f7;
+            text-align: center;
+            margin-bottom: 10px;
+            text-shadow: 1px 1px 4px #000a;
+            letter-spacing: 2px;
+        }
+        
+        .score-display {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fff;
+            text-align: center;
+            text-shadow: 2px 2px 6px #000a;
+        }
+        
+        @media (max-width: 900px) {
+            .penalty-bar {
+                min-width: 600px;
+                width: 95vw;
+                min-height: 100px;
+                padding: 12px 15px;
+            }
+            
+
+            
+            .team-name {
+                font-size: 1em;
+            }
+            
+            .penalty-dots {
+                gap: 4px;
+            }
+            
+            .penalty-dot {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+            
+            .penalty-title {
+                font-size: 1.5em;
+            }
+            
+            .score-display {
+                font-size: 2em;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .penalty-bar {
+                min-width: 400px;
+                width: 98vw;
+                min-height: 80px;
+                padding: 10px 12px;
+                margin-top: 40px;
+            }
+            
+
+            
+            .team-name {
+                font-size: 0.9em;
+            }
+            
+            .penalty-dots {
+                gap: 3px;
+            }
+            
+            .penalty-dot {
+                width: 24px;
+                height: 24px;
+                font-size: 12px;
+            }
+            
+            .penalty-title {
+                font-size: 1.3em;
+            }
+            
+            .score-display {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="penalty-overlay" id="penalty-overlay">
+
+        <div class="penalty-bar">
+            <!-- Left Team -->
+            <div class="team-section">
+                <div class="penalty-dots" id="left-penalty-dots">
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                </div>
+                <div class="team-name" id="left-team-name">LEFT TEAM</div>
+            </div>
+            
+            <!-- Center Section -->
+            <div class="center-section">
+                <div class="penalty-title">PENALTIES</div>
+                <div class="score-display" id="penalty-score">0 - 0</div>
+            </div>
+            
+            <!-- Right Team -->
+            <div class="team-section">
+                <div class="penalty-dots" id="right-penalty-dots">
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                    <div class="penalty-dot empty"></div>
+                </div>
+                <div class="team-name" id="right-team-name">RIGHT TEAM</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Get tenant ID from URL for multi-tenant support
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Connect to Socket.IO server (always use default namespace)
+        const socket = connectSocket();
+        
+        // Join the tenant room if we have a tenant ID
+        if (tenantId && tenantId !== 'penalty') {
+            socket.emit('join', { tenantId: tenantId });
+            console.log(`Joined tenant room: /${tenantId}`);
+        }
+        
+        let currentPenaltyData = {
+            leftTeam: 'LEFT TEAM',
+            rightTeam: 'RIGHT TEAM',
+            leftPenalties: [],
+            rightPenalties: [],
+            leftTeamColor: '#ff0000',
+            rightTeamColor: '#0066cc'
+        };
+        
+        function showPenalty(data = null) {
+            if (data) {
+                currentPenaltyData = { ...currentPenaltyData, ...data };
+                updatePenaltyDisplay();
+            }
+            document.getElementById('penalty-overlay').style.display = 'flex';
+        }
+        
+        function hidePenalty() {
+            document.getElementById('penalty-overlay').style.display = 'none';
+        }
+        
+                function updatePenaltyDisplay() {
+            // Update team names
+            document.getElementById('left-team-name').textContent = currentPenaltyData.leftTeam || 'LEFT TEAM';
+            document.getElementById('right-team-name').textContent = currentPenaltyData.rightTeam || 'RIGHT TEAM';
+            
+            // Update team colors on corners
+            const penaltyBar = document.querySelector('.penalty-bar');
+            penaltyBar.style.setProperty('--left-team-color', currentPenaltyData.leftTeamColor || '#ff0000');
+            penaltyBar.style.setProperty('--right-team-color', currentPenaltyData.rightTeamColor || '#0066cc');
+            
+            // SEPARATE LOGIC FOR NORMAL PENALTY (FIRST 5 SHOTS) AND SUDDEN DEATH
+            
+            const leftTotal = currentPenaltyData.leftPenalties.length;
+            const rightTotal = currentPenaltyData.rightPenalties.length;
+            
+            // Get first 5 shots for each team
+            const leftFirst5 = currentPenaltyData.leftPenalties.slice(0, 5);
+            const rightFirst5 = currentPenaltyData.rightPenalties.slice(0, 5);
+            
+            // Get sudden death shots (after first 5)
+            const leftSuddenDeath = currentPenaltyData.leftPenalties.slice(5);
+            const rightSuddenDeath = currentPenaltyData.rightPenalties.slice(5);
+            
+            // Calculate scores for first 5 shots
+            const leftFirst5Goals = leftFirst5.filter(p => p).length;
+            const rightFirst5Goals = rightFirst5.filter(p => p).length;
+            
+            // Calculate scores for sudden death
+            const leftSuddenDeathGoals = leftSuddenDeath.filter(p => p).length;
+            const rightSuddenDeathGoals = rightSuddenDeath.filter(p => p).length;
+            
+            // Total scores
+            const leftTotalGoals = leftFirst5Goals + leftSuddenDeathGoals;
+            const rightTotalGoals = rightFirst5Goals + rightSuddenDeathGoals;
+            
+            // Update penalty score
+            document.getElementById('penalty-score').textContent = `${leftTotalGoals} - ${rightTotalGoals}`;
+            
+            // Check if both teams have completed 5 shots
+            const bothTeamsShot5 = leftTotal >= 5 && rightTotal >= 5;
+            
+            // Check if tied after 5 shots
+            const isTiedAfter5 = bothTeamsShot5 && leftFirst5Goals === rightFirst5Goals;
+            
+            // Determine what to display and winner logic
+            let maxDots = 5;
+            let leftPenaltiesToShow = [];
+            let rightPenaltiesToShow = [];
+            let winner = null;
+            
+            if (isTiedAfter5) {
+                // SUDDEN DEATH MODE - Show only sudden death shots
+                leftPenaltiesToShow = leftSuddenDeath;
+                rightPenaltiesToShow = rightSuddenDeath;
+                maxDots = Math.max(leftPenaltiesToShow.length, rightPenaltiesToShow.length, 5);
+                
+                // Sudden death winner logic
+                if (leftPenaltiesToShow.length === rightPenaltiesToShow.length && leftPenaltiesToShow.length > 0) {
+                    // Both teams have shot the same number in sudden death
+                    const leftLastShot = leftPenaltiesToShow[leftPenaltiesToShow.length - 1];
+                    const rightLastShot = rightPenaltiesToShow[rightPenaltiesToShow.length - 1];
+                    
+                    // Only determine winner if one scored and the other missed in the same round
+                    if (leftLastShot && !rightLastShot) {
+                        winner = 'left';
+                    } else if (rightLastShot && !leftLastShot) {
+                        winner = 'right';
+                    }
+                    // If both scored or both missed, continue to next round
+                }
+                // If different number of shots, no winner yet
+            } else {
+                // NORMAL PENALTY MODE - Show all shots (up to 5)
+                leftPenaltiesToShow = currentPenaltyData.leftPenalties.slice(0, 5);
+                rightPenaltiesToShow = currentPenaltyData.rightPenalties.slice(0, 5);
+                maxDots = Math.max(leftPenaltiesToShow.length, rightPenaltiesToShow.length, 5);
+                
+                // Normal penalty winner logic
+                if (bothTeamsShot5) {
+                    // Both teams completed 5 shots
+                    if (leftFirst5Goals > rightFirst5Goals) {
+                        winner = 'left';
+                    } else if (rightFirst5Goals > leftFirst5Goals) {
+                        winner = 'right';
+                    }
+                    // If tied, will go to sudden death
+                } else {
+                    // Still in first 5 shots - check if one team can't catch up
+                    const remainingLeft = 5 - leftTotal;
+                    const remainingRight = 5 - rightTotal;
+                    
+                    if (leftFirst5Goals > rightFirst5Goals + remainingRight) {
+                        winner = 'left';
+                    } else if (rightFirst5Goals > leftFirst5Goals + remainingLeft) {
+                        winner = 'right';
+                    }
+                }
+            }
+            
+            // Handle winner (without win animation)
+            const leftTeamSection = document.querySelector('.team-section:first-child');
+            const rightTeamSection = document.querySelector('.team-section:last-child');
+            
+            if (winner) {
+                // Add winner class to winning team
+                if (winner === 'left') {
+                    leftTeamSection.classList.add('winner');
+                    rightTeamSection.classList.remove('winner');
+                } else {
+                    rightTeamSection.classList.add('winner');
+                    leftTeamSection.classList.remove('winner');
+                }
+                
+                // Emit event to admin to disable buttons
+                if (window.socket) {
+                    window.socket.emit('penaltyGameOver', { 
+                        tenantId: window.tenantId || 'RRjxZsFu',
+                        winner: winner,
+                        leftTeam: currentPenaltyData.leftTeam,
+                        rightTeam: currentPenaltyData.rightTeam
+                    });
+                }
+            } else {
+                // Remove winner classes
+                leftTeamSection.classList.remove('winner');
+                rightTeamSection.classList.remove('winner');
+            }
+            
+            // Update penalty dots for left team
+            const leftDots = document.getElementById('left-penalty-dots');
+            leftDots.innerHTML = '';
+            for (let i = 0; i < maxDots; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'penalty-dot';
+                if (i < leftPenaltiesToShow.length) {
+                    dot.classList.add(leftPenaltiesToShow[i] ? 'goal' : 'miss');
+                } else {
+                    dot.classList.add('empty');
+                }
+                leftDots.appendChild(dot);
+            }
+            
+            // Update penalty dots for right team
+            const rightDots = document.getElementById('right-penalty-dots');
+            rightDots.innerHTML = '';
+            for (let i = 0; i < maxDots; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'penalty-dot';
+                if (i < rightPenaltiesToShow.length) {
+                    dot.classList.add(rightPenaltiesToShow[i] ? 'goal' : 'miss');
+                } else {
+                    dot.classList.add('empty');
+                }
+                rightDots.appendChild(dot);
+            }
+            
+
+        }
+        
+        // Socket.IO event listeners
+        socket.on('connect', () => console.log('Connected to penalty overlay server'));
+        socket.on('disconnect', () => console.log('Disconnected from penalty overlay server'));
+        socket.on('showPenalty', (data) => {
+            if (data && data.data) {
+                showPenalty(data.data);
+            } else {
+                showPenalty(data);
+            }
+        });
+        socket.on('hidePenalty', () => {
+            hidePenalty();
+        });
+        socket.on('updatePenalty', (data) => {
+            if (data && data.data) {
+                currentPenaltyData = { ...currentPenaltyData, ...data.data };
+                updatePenaltyDisplay();
+            }
+        });
+        
+        // Keyboard shortcut: Escape to hide
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hidePenalty();
+        });
+        
+        // Initialize with default data
+        updatePenaltyDisplay();
+        hidePenalty();
+    </script>
+</body>
+</html> 

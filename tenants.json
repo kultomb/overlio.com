@@ -1,0 +1,719 @@
+{
+  "RRjxZsFu": {
+    "id": "RRjxZsFu",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-21T01:55:25.114Z",
+    "admin": {
+      "username": "kultomb",
+      "passwordHash": "$2b$10$b0qx19mewIZnLs2Y2EZJ3OmoCOGXDl3OUeB5wKccdHnLee7k2QCrm"
+    },
+    "gameState": {
+      "leftTeam": "HOME 123",
+      "rightTeam": "AWAY 147369",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#99ff00",
+      "rightColor": "#0ecc00",
+      "leftColor2": "#efff0a",
+      "rightColor2": "#750000",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME 123",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [
+          {
+            "name": "Cristiano Ronaldo",
+            "number": "7"
+          },
+          {
+            "name": "Bruno Fernandes",
+            "number": "18"
+          },
+          {
+            "name": "Harry Maguire",
+            "number": "5"
+          },
+          {
+            "name": "Marcus Rashford",
+            "number": "10"
+          },
+          {
+            "name": "Paul Pogba",
+            "number": "6"
+          },
+          {
+            "name": "David de Gea",
+            "number": "1"
+          }
+        ],
+        "coach": "José Mourinho",
+        "startingPlayers": [
+          {
+            "name": "Cristiano Ronaldo",
+            "number": "7"
+          },
+          {
+            "name": "Bruno Fernandes",
+            "number": "18"
+          },
+          {
+            "name": "Harry Maguire",
+            "number": "5"
+          },
+          {
+            "name": "Marcus Rashford",
+            "number": "10"
+          },
+          {
+            "name": "Paul Pogba",
+            "number": "6"
+          },
+          {
+            "name": "David de Gea",
+            "number": "1"
+          }
+        ],
+        "substitutePlayers": [],
+        "originalText": "#José Mourinho\nCristiano Ronaldo 7\nBruno Fernandes 18\nHarry Maguire 5\nMarcus Rashford 10\nPaul Pogba 6\nDavid de Gea 1"
+      },
+      "awayTeam": {
+        "name": "AWAY 322",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [
+          {
+            "name": "Lionel Messi",
+            "number": "10"
+          },
+          {
+            "name": "Neymar Jr",
+            "number": "11"
+          },
+          {
+            "name": "Kylian Mbappé",
+            "number": "7"
+          },
+          {
+            "name": "Marquinhos",
+            "number": "5"
+          },
+          {
+            "name": "Marco Verratti",
+            "number": "6"
+          },
+          {
+            "name": "Gianluigi Donnarumma",
+            "number": "99"
+          }
+        ],
+        "coach": "Pep Guardiola",
+        "startingPlayers": [
+          {
+            "name": "Lionel Messi",
+            "number": "10"
+          },
+          {
+            "name": "Neymar Jr",
+            "number": "11"
+          },
+          {
+            "name": "Kylian Mbappé",
+            "number": "7"
+          },
+          {
+            "name": "Marquinhos",
+            "number": "5"
+          },
+          {
+            "name": "Marco Verratti",
+            "number": "6"
+          },
+          {
+            "name": "Gianluigi Donnarumma",
+            "number": "99"
+          }
+        ],
+        "substitutePlayers": [],
+        "originalText": "#Pep Guardiola\nLionel Messi 10\nNeymar Jr 11\nKylian Mbappé 7\nMarquinhos 5\nMarco Verratti 6\nGianluigi Donnarumma 99"
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": true,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": [],
+    "penaltyData": {
+      "leftScore": 0,
+      "rightScore": 0,
+      "penaltyHistory": {
+        "left": [],
+        "right": []
+      },
+      "visible": true
+    }
+  },
+  "yJgCStYV": {
+    "id": "yJgCStYV",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-23T07:13:43.101Z",
+    "admin": {
+      "username": "121212",
+      "passwordHash": "$2b$10$DDGyuM1pWRETsvzDvOL71eVnYAV.V3uI870oJ2qkejD8eGZG2nAMu"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "Qe1USvh7": {
+    "id": "Qe1USvh7",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-23T07:15:06.447Z",
+    "admin": {
+      "username": "12121212",
+      "passwordHash": "$2b$10$BGG7vrksnEyxholgALsWxeuO.9drefTSbqaHq5s.A6FMWkv3mzmgu"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "5KN159FS": {
+    "id": "5KN159FS",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-23T07:15:24.897Z",
+    "admin": {
+      "username": "111111",
+      "passwordHash": "$2b$10$hjorZBUFG1.wA6RXnH63tewJAhN6noq0BQQFglM.9QTLrBTdOZU1m"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "h216Q0Ue": {
+    "id": "h216Q0Ue",
+    "name": "sdsđssd",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-28T00:26:39.063Z",
+    "admin": {
+      "username": "user_h216Q0Ue",
+      "passwordHash": "$2b$10$acUP4WxmsbeHKhe2n5th4OZet2/OyFh9JMd99Wo9yOOeuEaaSEAzO"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "6jxyxCaq": {
+    "id": "6jxyxCaq",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-07-28T00:41:09.808Z",
+    "admin": {
+      "username": "ha131s",
+      "passwordHash": "$2b$10$Cd6XgoCXeNDN4NxPHLzAwO86F.Vp7bpvxaO.09fVXBaCMmr3.MBCC"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#4dff00",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#4dff00",
+        "country": "",
+        "players": "",
+        "playerList": [
+          {
+            "name": "Cristiano Ronaldo",
+            "number": "7"
+          },
+          {
+            "name": "Bruno Fernandes",
+            "number": "18"
+          },
+          {
+            "name": "Harry Maguire",
+            "number": "5"
+          },
+          {
+            "name": "Marcus Rashford",
+            "number": "10"
+          },
+          {
+            "name": "Paul Pogba",
+            "number": "6"
+          },
+          {
+            "name": "David de Gea",
+            "number": "1"
+          }
+        ],
+        "coach": "José Mourinho",
+        "startingPlayers": [
+          {
+            "name": "Cristiano Ronaldo",
+            "number": "7"
+          },
+          {
+            "name": "Bruno Fernandes",
+            "number": "18"
+          },
+          {
+            "name": "Harry Maguire",
+            "number": "5"
+          },
+          {
+            "name": "Marcus Rashford",
+            "number": "10"
+          },
+          {
+            "name": "Paul Pogba",
+            "number": "6"
+          },
+          {
+            "name": "David de Gea",
+            "number": "1"
+          }
+        ],
+        "substitutePlayers": [],
+        "originalText": "#José Mourinho\nCristiano Ronaldo 7\nBruno Fernandes 18\nHarry Maguire 5\nMarcus Rashford 10\nPaul Pogba 6\nDavid de Gea 1"
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [
+          {
+            "name": "Lionel Messi",
+            "number": "10"
+          },
+          {
+            "name": "Neymar Jr",
+            "number": "11"
+          },
+          {
+            "name": "Kylian Mbappé",
+            "number": "7"
+          },
+          {
+            "name": "Marquinhos",
+            "number": "5"
+          },
+          {
+            "name": "Marco Verratti",
+            "number": "6"
+          },
+          {
+            "name": "Gianluigi Donnarumma",
+            "number": "99"
+          }
+        ],
+        "coach": "Pep Guardiola",
+        "startingPlayers": [
+          {
+            "name": "Lionel Messi",
+            "number": "10"
+          },
+          {
+            "name": "Neymar Jr",
+            "number": "11"
+          },
+          {
+            "name": "Kylian Mbappé",
+            "number": "7"
+          },
+          {
+            "name": "Marquinhos",
+            "number": "5"
+          },
+          {
+            "name": "Marco Verratti",
+            "number": "6"
+          },
+          {
+            "name": "Gianluigi Donnarumma",
+            "number": "99"
+          }
+        ],
+        "substitutePlayers": [],
+        "originalText": "#Pep Guardiola\nLionel Messi 10\nNeymar Jr 11\nKylian Mbappé 7\nMarquinhos 5\nMarco Verratti 6\nGianluigi Donnarumma 99"
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "LMwR60VP": {
+    "id": "LMwR60VP",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-08-02T04:02:04.410Z",
+    "admin": {
+      "username": "admn12334",
+      "passwordHash": "$2b$10$vonZCOP9OBWi6WElHgxf.uhdQ5iRZ4Q4GUVv0eVe1YMUu4lS3cznW"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "rNLl3Ddp": {
+    "id": "rNLl3Ddp",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-08-18T02:34:30.684Z",
+    "admin": {
+      "username": "Maithang",
+      "passwordHash": "$2b$10$MlzJcNo8GhE8tNdOKl.Swu44EM4Z1ez/raaXYcPxONFNSPSYnKaES"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  }
+}

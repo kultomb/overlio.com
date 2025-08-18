@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Super Admin Panel</title>
+  <script src="/socket.io/socket.io.js"></script>
+  <style>
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .panel-container {
+      background: rgba(255,255,255,0.97);
+      border-radius: 16px;
+      box-shadow: 0 8px 32px rgba(44,62,80,0.12);
+      padding: 32px 24px 24px 24px;
+      max-width: 600px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 18px;
+    }
+    .panel-title {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #2935a5;
+      margin-bottom: 8px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .tenant-list {
+      width: 100%;
+      margin-bottom: 16px;
+      border-radius: 8px;
+      background: #f8f9fa;
+      box-shadow: 0 1px 4px rgba(102,126,234,0.06);
+      padding: 10px 0;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    .tenant-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      border-bottom: 1px solid #e1e8ed;
+      font-size: 1em;
+      transition: background-color 0.3s ease;
+    }
+    .tenant-row:last-child {
+      border-bottom: none;
+    }
+    .tenant-row:hover {
+      background-color: #f0f2f5;
+    }
+    .tenant-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+    .status-indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: #e74c3c;
+      transition: background-color 0.3s ease;
+    }
+    .status-indicator.online {
+      background-color: #27ae60;
+      box-shadow: 0 0 8px rgba(39, 174, 96, 0.4);
+    }
+    .status-indicator.offline {
+      background-color: #e74c3c;
+    }
+    .tenant-details {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .tenant-id {
+      font-weight: bold;
+      color: #764ba2;
+      font-size: 1em;
+    }
+    .tenant-name {
+      font-size: 0.85em;
+      color: #666;
+    }
+    .tenant-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .copy-btn {
+      background: #667eea;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 6px 12px;
+      font-size: 0.9em;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .copy-btn:hover {
+      background: #2935a5;
+    }
+    .create-btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 10px 0;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      width: 100%;
+      margin-bottom: 8px;
+      transition: box-shadow 0.2s, transform 0.2s;
+      box-shadow: 0 2px 8px rgba(102,126,234,0.08);
+    }
+    .create-btn:hover {
+      box-shadow: 0 4px 16px rgba(102,126,234,0.18);
+      transform: translateY(-2px);
+    }
+    .info-box {
+      background: #eaf0fb;
+      border: 1px solid #b3c6e7;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      color: #2935a5;
+      font-size: 1em;
+      word-break: break-all;
+      display: none;
+    }
+    .logout-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 8px 18px;
+      font-size: 1em;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 8px;
+      align-self: flex-end;
+      transition: background 0.2s;
+    }
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+    .stats {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .stat-item {
+      text-align: center;
+      flex: 1;
+    }
+    .stat-number {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #2935a5;
+    }
+    .stat-label {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 4px;
+    }
+    @media (max-width: 600px) {
+      .panel-container {
+        padding: 16px 4px 12px 4px;
+        max-width: 99vw;
+      }
+      .panel-title {
+        font-size: 1.1em;
+      }
+      .stats {
+        flex-direction: column;
+        gap: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="panel-container">
+    <div class="panel-title">Super Admin Panel</div>
+    
+    <div class="stats">
+      <div class="stat-item">
+        <div class="stat-number" id="totalTenants">0</div>
+        <div class="stat-label">Tổng số</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="onlineTenants">0</div>
+        <div class="stat-label">Online</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-number" id="offlineTenants">0</div>
+        <div class="stat-label">Offline</div>
+      </div>
+    </div>
+    
+    <button class="create-btn" onclick="createTenant()">+ Tạo khách hàng mới</button>
+    <div class="info-box" id="infoBox"></div>
+    <div class="tenant-list" id="tenantList">
+      <!-- Danh sách tenants sẽ được render ở đây -->
+    </div>
+    <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+  </div>
+  <script>
+    // ĐƠN GIẢN: Chỉ cần nhận event và đổi màu
+    let socket;
+    let tenants = [];
+    
+    function connectSocket() {
+        socket = io();
+        
+        // ĐƠN GIẢN: Nhận danh sách tenant ban đầu
+        socket.on('full-tenant-list', (tenantsList) => {
+            console.log('✅ Received tenant list:', tenantsList);
+            tenants = tenantsList;
+            renderTenants();
+        });
+        
+        // ĐƠN GIẢN: Tenant online → đổi màu xanh
+        socket.on('tenant-online', (data) => {
+            console.log('✅ Tenant online:', data.tenantId);
+            updateTenantColor(data.tenantId, 'online');
+        });
+        
+        // ĐƠN GIẢN: Tenant offline → đổi màu đỏ
+        socket.on('tenant-offline', (data) => {
+            console.log('❌ Tenant offline:', data.tenantId);
+            updateTenantColor(data.tenantId, 'offline');
+        });
+        
+        // ĐƠN GIẢN: Kết nối superadmin
+        socket.emit('superadmin-connect');
+    }
+    
+    // ĐƠN GIẢN: Chỉ cần đổi màu CSS
+    function updateTenantColor(tenantId, status) {
+        const tenant = tenants.find(t => t.id === tenantId);
+        if (tenant) {
+            tenant.online = (status === 'online');
+            renderTenants(); // Tự động đổi màu
+        }
+    }
+    
+    // ĐƠN GIẢN: Render với màu tự động
+    function renderTenants() {
+        const list = document.getElementById('tenantList');
+        list.innerHTML = '';
+        
+        tenants.forEach(tenant => {
+            const row = document.createElement('div');
+            row.className = 'tenant-row';
+            
+            // ĐƠN GIẢN: Màu tự động dựa trên online/offline
+            const statusClass = tenant.online ? 'online' : 'offline';
+            const statusText = tenant.online ? 'Online' : 'Offline';
+            
+            row.innerHTML = `
+                <div class="tenant-info">
+                    <div class="status-indicator ${statusClass}">${statusText}</div>
+                    <div class="tenant-details">
+                        <span class="tenant-id">${tenant.id}</span>
+                        <span class="tenant-name">${tenant.name || 'Không có tên'}</span>
+                    </div>
+                </div>
+                <div class="tenant-actions">
+                    <button class="copy-btn" onclick="copyLogin('${tenant.id}', '${tenant.username || tenant.id}')">Copy</button>
+                </div>
+            `;
+            list.appendChild(row);
+        });
+        
+        updateStats();
+    }
+    
+    // ĐƠN GIẢN: Cập nhật thống kê
+    function updateStats() {
+        const total = tenants.length;
+        const online = tenants.filter(t => t.online).length;
+        const offline = total - online;
+        
+        document.getElementById('totalTenants').textContent = total;
+        document.getElementById('onlineTenants').textContent = online;
+        document.getElementById('offlineTenants').textContent = offline;
+    }
+
+    async function loadTenants() {
+      try {
+        const response = await fetch('/api/tenants');
+        tenants = await response.json();
+        updateStats();
+        renderTenants();
+      } catch (error) {
+        console.error('Error loading tenants:', error);
+      }
+    }
+
+    function copyLogin(id, username) {
+      const info = `User: ${id}\nUsername: ${username}\nPassword: Liên hệ admin để lấy mật khẩu\nLink: ${window.location.origin}/${id}/admin`;
+      navigator.clipboard.writeText(info);
+      const box = document.getElementById('infoBox');
+      box.textContent = 'Đã copy thông tin đăng nhập cho khách hàng!';
+      box.style.display = 'block';
+      setTimeout(() => box.style.display = 'none', 2000);
+    }
+
+    async function createTenant() {
+      try {
+        const response = await fetch('/api/tenants', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
+        const result = await response.json();
+        if (result.success) {
+          const { id, username, password, loginUrl } = result.tenant;
+          const info = `User: ${id}\nUsername: ${username}\nPassword: ${password}\nLink: ${window.location.origin}${loginUrl}`;
+          navigator.clipboard.writeText(info);
+          const box = document.getElementById('infoBox');
+          box.textContent = `Đã tạo tenant mới: ${id}\nThông tin đã được copy!`;
+          box.style.display = 'block';
+          setTimeout(() => box.style.display = 'none', 3000);
+          loadTenants(); // Reload danh sách
+        }
+      } catch (error) {
+        console.error('Error creating tenant:', error);
+        const box = document.getElementById('infoBox');
+        box.textContent = 'Lỗi khi tạo tenant mới!';
+        box.style.display = 'block';
+        setTimeout(() => box.style.display = 'none', 2000);
+      }
+    }
+
+    function logout() {
+      window.location.href = '/';
+    }
+
+    // IMPROVED: Auto-refresh tenant status every 30 seconds
+    function startAutoRefresh() {
+      setInterval(() => {
+        if (socket && socket.connected) {
+          socket.emit('request-tenant-status');
+        }
+      }, 30000); // 30 seconds
+    }
+
+    // Khởi tạo khi trang load
+    connectSocket();
+    loadTenants();
+    startAutoRefresh();
+  </script>
+</body>
+</html> 

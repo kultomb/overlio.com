@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lineup Overlay</title>
+    <link rel="stylesheet" href="/overlays.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            min-width: 100vw;
+            background: transparent;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lineup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.5s ease;
+        }
+
+        .lineup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .lineup-container {
+            background: linear-gradient(135deg, #1e3c72, #2a5298, #4a90e2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 900px;
+            width: 90%;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            border: 2px solid #4a90e2;
+        }
+
+        .lineup-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lineup-title {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #fff;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 10px;
+        }
+
+        .teams-lineup {
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: flex-start;
+        }
+
+        .team-lineup {
+            flex: 1;
+            text-align: center;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .team-name {
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #fff;
+            margin-bottom: 8px;
+            padding: 15px;
+            border-radius: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-height: 60px;
+        }
+
+        .team-name.long-name {
+            font-size: 1.4em;
+        }
+
+        .team-name.very-long-name {
+            font-size: 1.1em;
+        }
+
+        .team-name.home {
+            background: linear-gradient(45deg, var(--home-color, #91ee20), var(--home-color-dark, #7dd61a));
+        }
+
+        .team-name.away {
+            background: linear-gradient(45deg, var(--away-color, #0080ff), var(--away-color-dark, #0066cc));
+        }
+
+        .players-list {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 15px;
+            padding: 20px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .player-item {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 10px;
+            border-left: 5px solid;
+            transition: all 0.3s ease;
+        }
+
+        .player-item:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateX(5px);
+        }
+
+        .player-item.home {
+            border-left-color: var(--home-color, #91ee20);
+        }
+
+        .player-item.away {
+            border-left-color: var(--away-color, #0080ff);
+        }
+
+        .player-number {
+            background: #fff;
+            color: #000;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1em;
+            margin-right: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .player-name {
+            color: #fff;
+            font-size: 1.1em;
+            flex: 1;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .coach-info {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            padding: 10px 15px 10px 15px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+        }
+
+        .coach-label {
+            font-size: 0.9em;
+            color: #e0e0e0;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+
+        .coach-name {
+            font-size: 1.2em;
+            color: #fff;
+            font-weight: bold;
+        }
+
+
+
+        @media (max-width: 768px) {
+            .teams-lineup {
+                flex-direction: column;
+                gap: 20px;
+            }
+            
+            .team-lineup {
+                max-width: 100%;
+            }
+            
+            .lineup-container {
+                padding: 20px;
+                margin: 20px;
+            }
+            
+            .lineup-title {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lineup-overlay" id="lineup-overlay">
+        <div class="lineup-container">
+            <div class="lineup-header">
+                <div class="lineup-title">STARTING LINEUP</div>
+            </div>
+            
+            <div class="teams-lineup">
+                <div class="team-lineup">
+                    <div class="team-name home" id="home-team-name">HOME</div>
+                    <div class="coach-info" id="home-coach-info" style="display: none;">
+                        <div class="coach-label">HLV</div>
+                        <div class="coach-name" id="home-coach-name"></div>
+                    </div>
+                    <div class="players-list" id="home-players">
+                        <!-- Starting players will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="team-lineup">
+                    <div class="team-name away" id="away-team-name">AWAY</div>
+                    <div class="coach-info" id="away-coach-info" style="display: none;">
+                        <div class="coach-label">HLV</div>
+                        <div class="coach-name" id="away-coach-name"></div>
+                    </div>
+                    <div class="players-list" id="away-players">
+                        <!-- Starting players will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Get tenant ID from URL for multi-tenant support
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Connect to Socket.IO server with tenant ID
+const socket = connectSocket();
+        
+        // Join the tenant room if we have a tenant ID
+        if (tenantId && tenantId !== 'lineup') {
+            socket.emit('join', { tenantId: tenantId });
+            console.log(`Joined tenant room: /${tenantId}`);
+        }
+        let lineupData = {
+            homeTeam: {
+                name: 'HOME',
+                color: '#91ee20',
+                players: []
+            },
+            awayTeam: {
+                name: 'AWAY',
+                color: '#0080ff',
+                players: []
+            }
+        };
+
+        function showLineup() {
+            const overlay = document.getElementById('lineup-overlay');
+            overlay.classList.add('active');
+        }
+
+        function hideLineup() {
+            const overlay = document.getElementById('lineup-overlay');
+            overlay.classList.remove('active');
+        }
+
+        function updateTeamColors(homeColor, awayColor) {
+            // Convert hex to darker shade for gradients
+            function darkenColor(hex, percent) {
+                const num = parseInt(hex.replace("#", ""), 16);
+                const amt = Math.round(2.55 * percent);
+                const R = (num >> 16) - amt;
+                const G = (num >> 8 & 0x00FF) - amt;
+                const B = (num & 0x0000FF) - amt;
+                return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                    (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                    (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+            }
+
+            const homeColorDark = darkenColor(homeColor, 20);
+            const awayColorDark = darkenColor(awayColor, 20);
+
+            // Set CSS custom properties
+            document.documentElement.style.setProperty('--home-color', homeColor);
+            document.documentElement.style.setProperty('--home-color-dark', homeColorDark);
+            document.documentElement.style.setProperty('--away-color', awayColor);
+            document.documentElement.style.setProperty('--away-color-dark', awayColorDark);
+        }
+
+        function updateLineup(data) {
+            lineupData = data;
+            
+            // Update team colors
+            updateTeamColors(data.homeTeam.color, data.awayTeam.color);
+            
+            // Update team names
+            const homeTeamName = document.getElementById('home-team-name');
+            const awayTeamName = document.getElementById('away-team-name');
+            
+            homeTeamName.textContent = data.homeTeam.name.toUpperCase();
+            awayTeamName.textContent = data.awayTeam.name.toUpperCase();
+            
+            // Adjust font size based on the longer team name to maintain symmetry
+            function adjustFontSize(homeElement, awayElement, homeText, awayText) {
+                homeElement.classList.remove('long-name', 'very-long-name');
+                awayElement.classList.remove('long-name', 'very-long-name');
+                
+                const maxLength = Math.max(homeText.length, awayText.length);
+                
+                if (maxLength > 12) {
+                    homeElement.classList.add('very-long-name');
+                    awayElement.classList.add('very-long-name');
+                } else if (maxLength > 8) {
+                    homeElement.classList.add('long-name');
+                    awayElement.classList.add('long-name');
+                }
+            }
+            
+            adjustFontSize(homeTeamName, awayTeamName, data.homeTeam.name, data.awayTeam.name);
+            
+            // Update coach information
+            const homeCoachInfo = document.getElementById('home-coach-info');
+            const homeCoachName = document.getElementById('home-coach-name');
+            const awayCoachInfo = document.getElementById('away-coach-info');
+            const awayCoachName = document.getElementById('away-coach-name');
+            
+            // Show/hide and update home team coach
+            if (data.homeTeam.coach && data.homeTeam.coach.trim()) {
+                homeCoachName.textContent = data.homeTeam.coach.toUpperCase();
+                homeCoachInfo.style.display = 'block';
+            } else {
+                homeCoachInfo.style.display = 'none';
+            }
+            
+            // Show/hide and update away team coach
+            if (data.awayTeam.coach && data.awayTeam.coach.trim()) {
+                awayCoachName.textContent = data.awayTeam.coach.toUpperCase();
+                awayCoachInfo.style.display = 'block';
+            } else {
+                awayCoachInfo.style.display = 'none';
+            }
+            
+            // Update home team players (only starting lineup)
+            const homePlayersContainer = document.getElementById('home-players');
+            homePlayersContainer.innerHTML = '';
+            const homePlayersToShow = data.homeTeam.startingPlayers || data.homeTeam.playerList || [];
+            homePlayersToShow.forEach(player => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player-item home';
+                playerElement.innerHTML = `
+                    <div class="player-number">${player.number}</div>
+                    <div class="player-name">${player.name.toUpperCase()}</div>
+                `;
+                homePlayersContainer.appendChild(playerElement);
+            });
+            
+            // Update away team players (only starting lineup)
+            const awayPlayersContainer = document.getElementById('away-players');
+            awayPlayersContainer.innerHTML = '';
+            const awayPlayersToShow = data.awayTeam.startingPlayers || data.awayTeam.playerList || [];
+            awayPlayersToShow.forEach(player => {
+                const playerElement = document.createElement('div');
+                playerElement.className = 'player-item away';
+                playerElement.innerHTML = `
+                    <div class="player-number">${player.number}</div>
+                    <div class="player-name">${player.name.toUpperCase()}</div>
+                `;
+                awayPlayersContainer.appendChild(playerElement);
+            });
+        }
+
+        // Socket.IO event listeners
+        socket.on('connect', () => console.log('Connected to lineup overlay server'));
+        socket.on('disconnect', () => console.log('Disconnected from lineup overlay server'));
+        
+        socket.on('lineupData', (data) => {
+            updateLineup(data);
+        });
+
+        socket.on('teamUpdate', (data) => {
+            console.log('Lineup overlay received team update:', data);
+            // Update team names in lineupData if available
+            if (lineupData) {
+                lineupData.homeTeam.name = data.leftTeam;
+                lineupData.awayTeam.name = data.rightTeam;
+                updateLineup(lineupData);
+            }
+        });
+
+        socket.on('showLineup', (data) => {
+            console.log('Lineup overlay received showLineup:', data);
+            // Only show for 'both' teams or when no side is specified (legacy)
+            if (!data || data.side === 'both' || data.side === undefined) {
+                // Update lineup data if provided
+                if (data && data.homeTeam && data.awayTeam) {
+                    updateLineup(data);
+                }
+                showLineup();
+            }
+        });
+
+        socket.on('hideLineup', () => {
+            hideLineup();
+        });
+
+        // Request initial lineup data
+        socket.emit('requestLineupData');
+
+        // Auto-hide after 10 seconds for general overlay
+        let autoHideTimer = null;
+        socket.on('showLineup', (data) => {
+            // Only auto-hide for 'both' teams or when no side is specified (legacy)
+            if (!data || data.side === 'both' || data.side === undefined) {
+                showLineup();
+                if (autoHideTimer) clearTimeout(autoHideTimer);
+                autoHideTimer = setTimeout(() => {
+                    hideLineup();
+                }, 10000); // 10 seconds
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            switch(e.key) {
+                case 'l':
+                case 'L':
+                    showLineup();
+                    break;
+                case 'Escape':
+                    hideLineup();
+                    break;
+            }
+        });
+    </script>
+</body>
+</html> 
