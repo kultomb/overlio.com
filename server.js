@@ -472,6 +472,7 @@ app.post('/api/register', express.json(), async (req, res) => {
   
   // Normalize username (first letter uppercase, rest lowercase)
   const normalizedUsername = normalizeUsername(username);
+  console.log('Username normalization:', { original: username, normalized: normalizedUsername });
   
   // Kiểm tra username đã tồn tại chưa (case-insensitive)
   for (const tenant of Object.values(tenants)) {
@@ -518,7 +519,8 @@ app.post('/api/register', express.json(), async (req, res) => {
   // THÊM LOGGING
   logTenantActivity('REGISTER_SUCCESS', tenantId, { 
     customerName: customerName, 
-    username: username,
+    username: normalizedUsername,
+    originalUsername: username,
     status: 'pending'
   });
   
@@ -539,10 +541,19 @@ app.post('/api/login', express.json(), async (req, res) => {
   let foundTenant = null;
   let foundTenantId = null;
   
+  console.log('Searching for username:', username);
+  
   for (const [tenantId, tenant] of Object.entries(tenants)) {
-    if (tenant.admin?.username.toLowerCase() === username.toLowerCase()) {
+    const storedUsername = tenant.admin?.username;
+    const storedLower = storedUsername?.toLowerCase();
+    const inputLower = username?.toLowerCase();
+    
+    console.log(`Comparing: "${storedUsername}" (${storedLower}) vs "${username}" (${inputLower})`);
+    
+    if (storedLower === inputLower) {
       foundTenant = tenant;
       foundTenantId = tenantId;
+      console.log('Match found!');
       break;
     }
   }
