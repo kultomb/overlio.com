@@ -6,7 +6,7 @@
     "status": "approved",
     "createdAt": "2025-07-21T01:55:25.114Z",
     "admin": {
-      "username": "Kultomb",
+      "username": "kultomb",
       "passwordHash": "$2b$10$b0qx19mewIZnLs2Y2EZJ3OmoCOGXDl3OUeB5wKccdHnLee7k2QCrm"
     },
     "gameState": {
@@ -369,7 +369,7 @@
     "status": "approved",
     "createdAt": "2025-07-28T00:26:39.063Z",
     "admin": {
-      "username": "User_h216q0ue",
+      "username": "user_h216Q0Ue",
       "passwordHash": "$2b$10$acUP4WxmsbeHKhe2n5th4OZet2/OyFh9JMd99Wo9yOOeuEaaSEAzO"
     },
     "gameState": {
@@ -431,7 +431,7 @@
     "status": "approved",
     "createdAt": "2025-07-28T00:41:09.808Z",
     "admin": {
-      "username": "Ha131s",
+      "username": "ha131s",
       "passwordHash": "$2b$10$Cd6XgoCXeNDN4NxPHLzAwO86F.Vp7bpvxaO.09fVXBaCMmr3.MBCC"
     },
     "gameState": {
@@ -599,7 +599,7 @@
     "status": "approved",
     "createdAt": "2025-08-02T04:02:04.410Z",
     "admin": {
-      "username": "Admn12334",
+      "username": "admn12334",
       "passwordHash": "$2b$10$vonZCOP9OBWi6WElHgxf.uhdQ5iRZ4Q4GUVv0eVe1YMUu4lS3cznW"
     },
     "gameState": {
@@ -663,6 +663,68 @@
     "admin": {
       "username": "Maithang",
       "passwordHash": "$2b$10$MlzJcNo8GhE8tNdOKl.Swu44EM4Z1ez/raaXYcPxONFNSPSYnKaES"
+    },
+    "gameState": {
+      "leftTeam": "HOME",
+      "rightTeam": "AWAY",
+      "leftScore": 0,
+      "rightScore": 0,
+      "leftColor": "#ff0000",
+      "rightColor": "#0066cc",
+      "leftColor2": "#ffffff",
+      "rightColor2": "#ffffff",
+      "time": "00:00",
+      "period": "1st Half",
+      "addedTime": "+0",
+      "fieldType": "11",
+      "isTimerRunning": false,
+      "timerStartTime": null,
+      "periodStartTime": null,
+      "replayUrl": "",
+      "replayVisible": false
+    },
+    "lineupData": {
+      "homeTeam": {
+        "name": "HOME",
+        "color": "#ff0000",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      },
+      "awayTeam": {
+        "name": "AWAY",
+        "color": "#0066cc",
+        "country": "",
+        "players": "",
+        "playerList": [],
+        "coach": ""
+      }
+    },
+    "sponsorData": {
+      "label": "NHÀ TÀI TRỢ",
+      "text": "Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.",
+      "visible": false,
+      "paused": false
+    },
+    "isTimerRunning": false,
+    "isAddedTimeRunning": false,
+    "currentSeconds": 0,
+    "currentPeriod": 1,
+    "addedTimeSeconds": 0,
+    "halfTimeMinutes": 45,
+    "currentStreamUrl": "",
+    "streamClients": []
+  },
+  "faRsSiBi": {
+    "id": "faRsSiBi",
+    "name": "0989439993",
+    "active": true,
+    "status": "approved",
+    "createdAt": "2025-08-18T02:55:18.738Z",
+    "admin": {
+      "username": "Maithang1",
+      "passwordHash": "$2b$10$Be3Ndd9DHDaYBu2hr.WZF.10FGEYL3nRUKzPeO/iopMvzAvRPyJLO"
     },
     "gameState": {
       "leftTeam": "HOME",
