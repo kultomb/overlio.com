@@ -2103,6 +2103,7 @@ io.on('connection', (socket) => {
             tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
         }
         tenantInfo.tenant.lowerThirdData.visible = true;
+        emitToTenantRoom(tenantInfo.tenantId, 'showLowerThird');
         emitToTenantRoom(tenantInfo.tenantId, 'lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
         writeTenants(tenants);
     });
@@ -2114,6 +2115,7 @@ io.on('connection', (socket) => {
             tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
         }
         tenantInfo.tenant.lowerThirdData.visible = false;
+        emitToTenantRoom(tenantInfo.tenantId, 'hideLowerThird');
         emitToTenantRoom(tenantInfo.tenantId, 'lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
         writeTenants(tenants);
     });

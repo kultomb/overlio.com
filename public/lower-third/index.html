@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/lower-third/style.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
 </head>
 <body>
     <div class="stage" id="stage">
@@ -26,8 +28,70 @@
             </div>
         </div>
     </div>
-    <script src="/socket.io/socket.io.js"></script>
-    <script src="/tenant-utils.js"></script>
-    <script src="/lower-third/script.js"></script>
+    <script>
+        (function () {
+            const pathParts = window.location.pathname.split('/').filter(function (part) { return part; });
+            const tenantId = pathParts[0];
+
+            const socket = connectSocket();
+
+            if (tenantId && tenantId !== 'lower-third') {
+                socket.emit('join', { tenantId: tenantId });
+            }
+
+            const lowerThird = document.getElementById('lowerThird');
+            const songTitleEl = document.getElementById('songTitle');
+            const singerNameEl = document.getElementById('singerName');
+
+            function setBarVisible(visible) {
+                const vis = !!visible;
+                lowerThird.setAttribute('data-visible', vis ? 'true' : 'false');
+                lowerThird.setAttribute('aria-hidden', vis ? 'false' : 'true');
+            }
+
+            function applyLowerThirdData(data) {
+                if (!data) return;
+                if (data.title !== undefined && data.title !== null) {
+                    songTitleEl.textContent = String(data.title).trim() || '—';
+                }
+                if (data.singer !== undefined && data.singer !== null) {
+                    singerNameEl.textContent = String(data.singer).trim() || '—';
+                }
+                if (data.visible !== undefined) {
+                    setBarVisible(data.visible);
+                }
+            }
+
+            socket.on('connect', function () {
+                console.log('Lower third overlay connected');
+            });
+
+            socket.on('disconnect', function () {
+                console.log('Lower third overlay disconnected');
+            });
+
+            socket.on('connect_error', function (err) {
+                console.error('Lower third socket error:', err);
+            });
+
+            /* Giống scoreboard: showScoreboard / hideScoreboard */
+            socket.on('showLowerThird', function () {
+                setBarVisible(true);
+            });
+
+            socket.on('hideLowerThird', function () {
+                setBarVisible(false);
+            });
+
+            /* Giống sponsor: sponsorUpdate — đồng bộ text + trạng thái */
+            socket.on('lowerThirdUpdate', applyLowerThirdData);
+
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') setBarVisible(false);
+            });
+
+            setBarVisible(false);
+        })();
+    </script>
 </body>
 </html>
