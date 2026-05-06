@@ -191,6 +191,9 @@ function readTenants() {
       if (tenant.gameState && (tenant.gameState.addedTime === '+0' || !tenant.gameState.addedTime)) {
         tenant.gameState.addedTime = '+0';
       }
+      if (!tenant.lowerThirdData) {
+        tenant.lowerThirdData = { title: '', singer: '', visible: false };
+      }
     });
     
     return tenants;
@@ -510,6 +513,7 @@ app.post('/api/register', express.json(), async (req, res) => {
       awayTeam: { name: 'AWAY', color: '#0066cc', country: '', players: '', playerList: [], coach: '' }
     },
     sponsorData: { label: 'NHÀ TÀI TRỢ', text: 'Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.', visible: false, paused: false },
+    lowerThirdData: { title: '', singer: '', visible: false },
     timerInterval: null, addedTimeInterval: null, isTimerRunning: false, isAddedTimeRunning: false, currentSeconds: 0, currentPeriod: 1, addedTimeSeconds: 0, halfTimeMinutes: 45, currentStreamUrl: '', streamClients: []
   };
   
@@ -1167,6 +1171,7 @@ app.post('/api/tenants', requireSuperadminAuth, async (req, res) => {
       awayTeam: { name: 'AWAY', color: '#0066cc', country: '', players: '', playerList: [], coach: '' }
     },
     sponsorData: { label: 'NHÀ TÀI TRỢ', text: 'Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.', visible: false, paused: false },
+    lowerThirdData: { title: '', singer: '', visible: false },
     timerInterval: null, addedTimeInterval: null, isTimerRunning: false, isAddedTimeRunning: false, currentSeconds: 0, currentPeriod: 1, addedTimeSeconds: 0, halfTimeMinutes: 45, currentStreamUrl: '', streamClients: []
   };
     
@@ -1561,6 +1566,11 @@ io.on('connection', (socket) => {
         
         // ĐƠN GIẢN: Don't track online status here, only on login/logout
         currentTenantId = tenantInfo.tenantId;
+
+        if (!tenantInfo.tenant.lowerThirdData) {
+          tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
+        }
+        socket.emit('lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
     }
     
     // Superadmin connection handling
@@ -2074,6 +2084,39 @@ io.on('connection', (socket) => {
         }
     });
 
+    socket.on('updateLowerThird', (data) => {
+        const tenantInfo = getTenantFromSocket();
+        if (!tenantInfo) return;
+        if (!tenantInfo.tenant.lowerThirdData) {
+            tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
+        }
+        if (data.title !== undefined) tenantInfo.tenant.lowerThirdData.title = String(data.title);
+        if (data.singer !== undefined) tenantInfo.tenant.lowerThirdData.singer = String(data.singer);
+        emitToTenantRoom(tenantInfo.tenantId, 'lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
+        writeTenants(tenants);
+    });
+
+    socket.on('showLowerThird', () => {
+        const tenantInfo = getTenantFromSocket();
+        if (!tenantInfo) return;
+        if (!tenantInfo.tenant.lowerThirdData) {
+            tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
+        }
+        tenantInfo.tenant.lowerThirdData.visible = true;
+        emitToTenantRoom(tenantInfo.tenantId, 'lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
+        writeTenants(tenants);
+    });
+
+    socket.on('hideLowerThird', () => {
+        const tenantInfo = getTenantFromSocket();
+        if (!tenantInfo) return;
+        if (!tenantInfo.tenant.lowerThirdData) {
+            tenantInfo.tenant.lowerThirdData = { title: '', singer: '', visible: false };
+        }
+        tenantInfo.tenant.lowerThirdData.visible = false;
+        emitToTenantRoom(tenantInfo.tenantId, 'lowerThirdUpdate', tenantInfo.tenant.lowerThirdData);
+        writeTenants(tenants);
+    });
 
 
     socket.on('join', (data) => {
@@ -2084,6 +2127,11 @@ io.on('connection', (socket) => {
             
             // Send a test message to confirm room joining
             socket.emit('roomJoined', { room: `/${data.tenantId}`, success: true });
+
+            const t = tenants[data.tenantId];
+            if (t && t.lowerThirdData) {
+                socket.emit('lowerThirdUpdate', t.lowerThirdData);
+            }
         }
     });
 

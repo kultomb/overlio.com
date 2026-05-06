@@ -4,125 +4,23 @@ body {
     margin: 0;
     padding: 0;
     width: 100%;
-    min-width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     overflow: hidden;
     background: transparent;
     font-family: "Montserrat", "Poppins", system-ui, sans-serif;
 }
 
-/* CEF/OBS: % height alone can collapse; vh/dvh fills Browser Source */
 .stage {
     position: fixed;
     inset: 0;
     width: 100%;
-    min-width: 100%;
-    min-height: 100vh;
-    min-height: 100dvh;
-    height: 100vh;
-    height: 100dvh;
+    height: 100%;
     background: transparent;
     pointer-events: none;
-    z-index: 0;
 }
 
 .stage * {
     box-sizing: border-box;
-}
-
-/* Testing controls — pointer-events restored */
-.controls {
-    pointer-events: auto;
-    position: fixed;
-    top: 16px;
-    right: 16px;
-    z-index: 100;
-    padding: 14px 16px;
-    max-width: 280px;
-    background: rgba(20, 20, 24, 0.85);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    border-radius: 10px;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-    color: #eee;
-    font-size: 13px;
-}
-
-.controls__field {
-    display: block;
-    margin-bottom: 10px;
-}
-
-.controls__field span {
-    display: block;
-    margin-bottom: 4px;
-    font-weight: 600;
-    font-size: 11px;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    opacity: 0.85;
-}
-
-.controls__field input {
-    width: 100%;
-    padding: 8px 10px;
-    border-radius: 6px;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    background: rgba(0, 0, 0, 0.35);
-    color: #fff;
-    font-family: inherit;
-    font-size: 14px;
-}
-
-.controls__field input:focus {
-    outline: none;
-    border-color: rgba(102, 126, 234, 0.8);
-}
-
-.controls__actions {
-    display: flex;
-    gap: 8px;
-    margin-top: 12px;
-}
-
-.controls__hint {
-    margin: 10px 0 0;
-    font-size: 11px;
-    opacity: 0.65;
-    line-height: 1.4;
-}
-
-.btn {
-    flex: 1;
-    padding: 10px 12px;
-    border: none;
-    border-radius: 8px;
-    font-family: inherit;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    cursor: pointer;
-    transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
-
-.btn:active {
-    transform: scale(0.97);
-}
-
-.btn-show {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    box-shadow: 0 4px 14px rgba(102, 126, 234, 0.4);
-}
-
-.btn-hide {
-    background: rgba(255, 255, 255, 0.12);
-    color: #fff;
-    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 /* Lower third — bottom-left, compact TV look */
@@ -131,7 +29,6 @@ body {
     position: absolute;
     left: 40px;
     bottom: 40px;
-    z-index: 50;
     display: flex;
     align-items: stretch;
     min-height: 72px;
@@ -196,11 +93,5 @@ body {
         width: calc(100vw - 32px);
         left: 16px;
         bottom: 16px;
-    }
-
-    .controls {
-        left: 16px;
-        right: 16px;
-        max-width: none;
     }
 }

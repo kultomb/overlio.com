@@ -257,6 +257,10 @@ const sponsorLabel = document.getElementById('sponsorLabel');
 const sponsorText = document.getElementById('sponsorText');
 const sponsorToggleBtn = document.getElementById('sponsorToggleBtn');
 
+const lowerThirdTitle = document.getElementById('lowerThirdTitle');
+const lowerThirdSinger = document.getElementById('lowerThirdSinger');
+const lowerThirdToggleBtn = document.getElementById('lowerThirdToggleBtn');
+
 // Lineup data storage
 let leftTeamPlayers = [];
 let rightTeamPlayers = [];
@@ -332,6 +336,23 @@ socket.on('colorUpdate', (data) => {
 });
 
 // Socket event listeners
+socket.on('lowerThirdUpdate', (data) => {
+    if (!data) return;
+    if (lowerThirdTitle && data.title !== undefined) lowerThirdTitle.value = data.title;
+    if (lowerThirdSinger && data.singer !== undefined) lowerThirdSinger.value = data.singer;
+    if (lowerThirdToggleBtn && data.visible !== undefined) {
+        if (data.visible) {
+            lowerThirdToggleBtn.textContent = '🙈 Hide';
+            lowerThirdToggleBtn.classList.remove('btn-success', 'btn-warning');
+            lowerThirdToggleBtn.classList.add('btn-danger');
+        } else {
+            lowerThirdToggleBtn.textContent = '👁️ Show';
+            lowerThirdToggleBtn.classList.remove('btn-danger');
+            lowerThirdToggleBtn.classList.add('btn-warning');
+        }
+    }
+});
+
 socket.on('timeUpdate', (data) => {
     console.log('Time update received from server:', data);
     // Cập nhật thời gian hiển thị trên admin panel
@@ -748,6 +769,42 @@ const toggleSponsor = () => {
         hideSponsor();
     } else {
         showSponsor();
+    }
+};
+
+const updateLowerThird = () => {
+    const title = lowerThirdTitle ? lowerThirdTitle.value.trim() : '';
+    const singer = lowerThirdSinger ? lowerThirdSinger.value.trim() : '';
+    socket.emit('updateLowerThird', { title, singer });
+    showNotification('Đã cập nhật Lower third!');
+};
+
+const showLowerThird = () => {
+    socket.emit('showLowerThird');
+    if (lowerThirdToggleBtn) {
+        lowerThirdToggleBtn.textContent = '🙈 Hide';
+        lowerThirdToggleBtn.classList.remove('btn-success', 'btn-warning');
+        lowerThirdToggleBtn.classList.add('btn-danger');
+    }
+    showNotification('Đã bật Lower third trên OBS.');
+};
+
+const hideLowerThird = () => {
+    socket.emit('hideLowerThird');
+    if (lowerThirdToggleBtn) {
+        lowerThirdToggleBtn.textContent = '👁️ Show';
+        lowerThirdToggleBtn.classList.remove('btn-danger');
+        lowerThirdToggleBtn.classList.add('btn-warning');
+    }
+    showNotification('Đã ẩn Lower third.');
+};
+
+const toggleLowerThird = () => {
+    if (!lowerThirdToggleBtn) return;
+    if (lowerThirdToggleBtn.textContent.includes('Hide')) {
+        hideLowerThird();
+    } else {
+        showLowerThird();
     }
 };
 

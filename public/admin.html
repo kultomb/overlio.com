@@ -1431,6 +1431,26 @@
                     </div>
                 </div>
 
+                <!-- Lower third (OBS nhạc) — đồng bộ với overlay /:tenant/lower-third -->
+                <div class="sponsor-block">
+                    <h2 class="section-title">Lower third (nhạc / OBS)</h2>
+
+                    <div class="form-group">
+                        <label>Tên bài:</label>
+                        <input type="text" id="lowerThirdTitle" placeholder="VD: Lạc Trôi" value="" autocomplete="off">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Ca sĩ:</label>
+                        <input type="text" id="lowerThirdSinger" placeholder="VD: Sơn Tùng M-TP" value="" autocomplete="off">
+                    </div>
+
+                    <div class="sponsor-controls">
+                        <button class="btn btn-success" onclick="updateLowerThird()">Cập nhật</button>
+                        <button class="btn btn-warning" id="lowerThirdToggleBtn" onclick="toggleLowerThird()">👁️ Show</button>
+                    </div>
+                </div>
+
                 <!-- Instant Replay -->
                 <div class="replay-block">
                     <h2 class="section-title">⚡ Instant Replay (Live Buffer)</h2>
