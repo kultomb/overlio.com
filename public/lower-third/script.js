@@ -7,7 +7,9 @@
     var btnShow = document.getElementById("btnShow");
     var btnHide = document.getElementById("btnHide");
 
-    var AUTO_HIDE_MS = 6000;
+    var hideControlsMode = /[?&]hideControls=1(?:&|$)/.test(window.location.search);
+    /* Có panel test: không tự ẩn (dễ chỉnh OBS). Chỉ ?hideControls=1: tự ẩy sau vài giây như TV */
+    var AUTO_HIDE_MS = hideControlsMode ? 8000 : 0;
     var hideTimer = null;
 
     function clearHideTimer() {
@@ -29,9 +31,11 @@
         clearHideTimer();
         lowerThird.setAttribute("data-visible", "true");
         lowerThird.setAttribute("aria-hidden", "false");
-        hideTimer = setTimeout(function () {
-            hide();
-        }, AUTO_HIDE_MS);
+        if (AUTO_HIDE_MS > 0) {
+            hideTimer = setTimeout(function () {
+                hide();
+            }, AUTO_HIDE_MS);
+        }
     }
 
     function hide() {
@@ -61,9 +65,23 @@
         toggle();
     });
 
-    // Optional: ?hideControls=1 — hide test panel for clean OBS capture
-    if (/[?&]hideControls=1(?:&|$)/.test(window.location.search)) {
+    function hideTestPanelIfRequested() {
+        if (!hideControlsMode) return;
         var panel = document.getElementById("controls");
         if (panel) panel.style.display = "none";
+    }
+
+    function boot() {
+        hideTestPanelIfRequested();
+        /* Luôn hiện overlay sau khi load — tránh OBS chỉ thấy panel nhập liệu */
+        setTimeout(function () {
+            show();
+        }, hideControlsMode ? 120 : 200);
+    }
+
+    if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot);
+    } else {
+        boot();
     }
 })();
