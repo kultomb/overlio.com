@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+# Disallow admin and private pages
+Disallow: /admin
+Disallow: /superadmin
+Disallow: /superadmin-login
+Disallow: /login
+Disallow: /register
+Disallow: /api/
+
+# Allow overlay pages
+Allow: /*-overlay.html
+
+# Sitemap
+Sitemap: https://overlio.com/sitemap.xml
+
+# Crawl-delay
+Crawl-delay: 1 

@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Đăng nhập - Overlio Live Scoreboard</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Đăng nhập vào hệ thống Overlio Live Scoreboard để quản lý trận đấu và bảng điểm.">
+    <meta name="keywords" content="đăng nhập, overlio, live scoreboard, quản lý trận đấu">
+    <meta name="author" content="Overlio Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Đăng nhập - Overlio Live Scoreboard">
+    <meta property="og:description" content="Đăng nhập vào hệ thống Overlio Live Scoreboard để quản lý trận đấu và bảng điểm.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://overlio.com/login">
+    <meta property="og:site_name" content="Overlio">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="canonical" href="https://overlio.com/login">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        .login-container {
+            background: rgba(255,255,255,0.97);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 24px;
+            font-size: 1em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        .login-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.18);
+        }
+        .login-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .switch-link {
+            display: block;
+            margin-top: 18px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .switch-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        .error-message, .success-message {
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            display: none;
+        }
+        .error-message {
+            background: #fdecea;
+            border: 1px solid #f5c6cb;
+            color: #e74c3c;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 20px 16px 20px 16px;
+                margin: 10px;
+                max-width: calc(100vw - 20px);
+                width: calc(100vw - 20px);
+                box-sizing: border-box;
+            }
+            .title { font-size: 1.5em; }
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 16px; /* Tránh zoom trên iOS */
+            }
+            .login-btn {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">🏆</div>
+        <h1 class="title">Đăng nhập</h1>
+        <p class="subtitle">Overlio Live Scoreboard</p>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        <form id="loginForm" autocomplete="on">
+            <div class="form-group">
+                <label for="username">Tên đăng nhập:</label>
+                <input type="text" id="username" name="username" required placeholder="Nhập tên đăng nhập">
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu">
+            </div>
+            <button type="submit" class="login-btn" id="loginBtn">Đăng nhập</button>
+        </form>
+        <a href="/register" class="switch-link">Chưa có tài khoản? Đăng ký</a>
+    </div>
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const loginBtn = document.getElementById('loginBtn');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            if (!username || !password) {
+                errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin!';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            loginBtn.disabled = true;
+            loginBtn.textContent = 'Đang đăng nhập...';
+            try {
+                const response = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    // Lưu thông tin đăng nhập vào localStorage
+                    const tenantId = result.redirectUrl.split('/')[1];
+                    localStorage.setItem('tenantId', tenantId);
+                    localStorage.setItem('username', username);
+                    successMessage.textContent = 'Đăng nhập thành công! Đang chuyển hướng...';
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = result.redirectUrl;
+                    }, 1000);
+                } else {
+                    try {
+                        const errorData = await response.json();
+                        errorMessage.textContent = errorData.error || 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.';
+                    } catch {
+                        const error = await response.text();
+                        errorMessage.textContent = error || 'Đăng nhập thất bại! Vui lòng kiểm tra lại thông tin.';
+                    }
+                    errorMessage.style.display = 'block';
+                }
+            } catch (err) {
+                errorMessage.textContent = 'Lỗi kết nối máy chủ!';
+                errorMessage.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.textContent = 'Đăng nhập';
+            }
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,97 @@
+/* OBS: full viewport, transparent — giống substitution / goal overlay */
+html,
+body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: transparent;
+    font-family: "Montserrat", "Poppins", system-ui, sans-serif;
+}
+
+.stage {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    pointer-events: none;
+}
+
+.stage * {
+    box-sizing: border-box;
+}
+
+/* Lower third — bottom-left, compact TV look */
+.lower-third {
+    pointer-events: none;
+    position: absolute;
+    left: 40px;
+    bottom: 40px;
+    display: flex;
+    align-items: stretch;
+    min-height: 72px;
+    max-height: 90px;
+    width: min(480px, calc(100vw - 80px));
+    min-width: 350px;
+    padding: 0;
+    border-radius: 8px;
+    overflow: hidden;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.45), 0 2px 8px rgba(0, 0, 0, 0.25);
+
+    opacity: 0;
+    transform: translate3d(-100%, 0, 0);
+    transition:
+        transform 0.65s cubic-bezier(0.22, 1, 0.36, 1),
+        opacity 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lower-third[data-visible="true"] {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.lower-third__accent {
+    flex: 0 0 6px;
+    background: linear-gradient(180deg, #667eea 0%, #764ba2 50%, #00d4aa 100%);
+}
+
+.lower-third__inner {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 16px 12px 14px;
+    gap: 2px;
+}
+
+.lower-third__title {
+    font-family: "Montserrat", "Poppins", sans-serif;
+    font-weight: 700;
+    font-size: clamp(18px, 1.35vw, 24px);
+    line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.lower-third__singer {
+    font-family: "Poppins", "Montserrat", sans-serif;
+    font-weight: 400;
+    font-size: clamp(13px, 0.95vw, 16px);
+    line-height: 1.25;
+    color: rgba(255, 255, 255, 0.82);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+@media (max-width: 600px) {
+    .lower-third {
+        min-width: 0;
+        width: calc(100vw - 32px);
+        left: 16px;
+        bottom: 16px;
+    }
+}

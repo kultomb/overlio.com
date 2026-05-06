@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Super Admin Login - Overlio Live Scoreboard</title>
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content="Đăng nhập Super Admin - Overlio Live Scoreboard System">
+  <meta name="keywords" content="super admin login, overlio, quản lý hệ thống">
+  <meta name="author" content="Overlio Team">
+  <meta name="robots" content="noindex, nofollow">
+  
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Super Admin Login - Overlio Live Scoreboard">
+  <meta property="og:description" content="Đăng nhập Super Admin - Overlio Live Scoreboard System">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://overlio.com/superadmin-login">
+  <meta property="og:site_name" content="Overlio">
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  <link rel="canonical" href="https://overlio.com/superadmin-login">
+  
+  <style>
+    :root {
+      --primary: #6f42c1;
+      --primary-dark: #4b2992;
+      --secondary: #667eea;
+      --success: #27ae60;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --info: #17a2b8;
+      --light: #f8f9fa;
+      --dark: #2c3e50;
+      --border: #e1e8ed;
+      --radius: 14px;
+      --shadow: 0 4px 24px rgba(44,62,80,0.10);
+    }
+    
+    body {
+      min-height: 100vh;
+      margin: 0;
+      font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .login-container {
+      background: rgba(255,255,255,0.98);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 40px;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px;
+    }
+    
+    .login-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .login-logo {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+    
+    .login-title {
+      font-size: 1.8em;
+      font-weight: bold;
+      color: var(--primary-dark);
+      margin-bottom: 5px;
+    }
+    
+    .login-subtitle {
+      color: #666;
+      font-size: 1em;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--dark);
+      font-size: 1em;
+    }
+    
+    .form-group input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 1em;
+      transition: border-color 0.3s ease;
+      box-sizing: border-box;
+    }
+    
+    .form-group input:focus {
+      outline: none;
+      border-color: var(--primary);
+    }
+    
+    .login-btn {
+      width: 100%;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      padding: 14px;
+      font-size: 1.1em;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    
+    .login-btn:hover {
+      background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(111,66,193,0.3);
+    }
+    
+    .login-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+    
+    .error-message {
+      background: #fdecea;
+      border: 1px solid #f5c6cb;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      color: var(--danger);
+      font-size: 0.95em;
+      display: none;
+    }
+    
+    .success-message {
+      background: #eaf0fb;
+      border: 1px solid #b3c6e7;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 20px;
+      color: var(--primary-dark);
+      font-size: 0.95em;
+      display: none;
+    }
+    
+    .back-link {
+      text-align: center;
+      margin-top: 20px;
+    }
+    
+    .back-link a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 500;
+    }
+    
+    .back-link a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      .login-container {
+        margin: 10px;
+        padding: 30px 20px;
+      }
+      
+      .login-title {
+        font-size: 1.5em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <div class="login-header">
+      <div class="login-logo">👑</div>
+      <div class="login-title">Overlio Super Admin</div>
+      <div class="login-subtitle">Đăng nhập để quản lý hệ thống</div>
+    </div>
+    
+    <div class="error-message" id="errorMessage"></div>
+    <div class="success-message" id="successMessage"></div>
+    
+    <form id="loginForm">
+      <div class="form-group">
+        <label for="username">Tên đăng nhập</label>
+        <input type="text" id="username" name="username" required>
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Mật khẩu</label>
+        <input type="password" id="password" name="password" required>
+      </div>
+      
+      <button type="submit" class="login-btn" id="loginBtn">
+        <span id="loginBtnText">Đăng nhập</span>
+      </button>
+    </form>
+    
+    <div class="back-link">
+      <a href="/">← Quay lại trang chủ</a>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('loginForm');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginBtnText = document.getElementById('loginBtnText');
+    const errorMessage = document.getElementById('errorMessage');
+    const successMessage = document.getElementById('successMessage');
+    
+    // Check rate limit status on page load
+    async function checkRateLimitStatus() {
+      try {
+        const response = await fetch('/api/superadmin/rate-limit-status');
+        const data = await response.json();
+        
+        if (data.isBlocked) {
+          showError(`IP của bạn bị khóa do quá nhiều lần thử đăng nhập. Thử lại sau ${data.blockTimeRemaining} phút.`);
+          loginBtn.disabled = true;
+          loginBtnText.textContent = 'IP Bị Khóa';
+        } else if (data.remainingAttempts < 5) {
+          showError(`Cảnh báo: Còn ${data.remainingAttempts} lần thử đăng nhập.`);
+        }
+      } catch (error) {
+        console.error('Rate limit check failed:', error);
+      }
+    }
+    
+    function showError(message) {
+      errorMessage.textContent = message;
+      errorMessage.style.display = 'block';
+      successMessage.style.display = 'none';
+    }
+    
+    function showSuccess(message) {
+      successMessage.textContent = message;
+      successMessage.style.display = 'block';
+      errorMessage.style.display = 'none';
+    }
+    
+    function hideMessages() {
+      errorMessage.style.display = 'none';
+      successMessage.style.display = 'none';
+    }
+    
+    function setLoading(loading) {
+      loginBtn.disabled = loading;
+      loginBtnText.textContent = loading ? 'Đang đăng nhập...' : 'Đăng nhập';
+    }
+    
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      
+      if (!username || !password) {
+        showError('Vui lòng nhập đầy đủ thông tin');
+        return;
+      }
+      
+      hideMessages();
+      setLoading(true);
+      
+      try {
+        const response = await fetch('/api/superadmin/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ username, password })
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+          showSuccess('Đăng nhập thành công! Đang chuyển hướng...');
+          // Lưu thông tin đăng nhập vào localStorage
+          localStorage.setItem('superadminAuthenticated', 'true');
+          localStorage.setItem('superadminUsername', username);
+          
+          // Chuyển hướng sau 1 giây
+          setTimeout(() => {
+            window.location.href = '/superadmin';
+          }, 1000);
+        } else {
+          if (response.status === 429) {
+            // Rate limit exceeded
+            showError(data.error);
+            loginBtn.disabled = true;
+            loginBtnText.textContent = 'IP Bị Khóa';
+        } else {
+          showError(data.error || 'Đăng nhập thất bại');
+            
+            // Check remaining attempts
+            if (data.remainingAttempts !== undefined) {
+              showError(`${data.error} (Còn ${data.remainingAttempts} lần thử)`);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showError('Lỗi kết nối máy chủ');
+      } finally {
+        setLoading(false);
+      }
+    });
+    
+    // Kiểm tra session authentication thay vì localStorage
+    async function checkSessionAuth() {
+      try {
+        const response = await fetch('/api/superadmin/check-session', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.authenticated) {
+          // Cập nhật localStorage để đồng bộ
+          localStorage.setItem('superadminAuthenticated', 'true');
+          localStorage.setItem('superadminUsername', data.username);
+          // Chỉ redirect nếu đang ở trang login
+          if (window.location.pathname === '/superadmin-login') {
+            window.location.href = '/superadmin';
+          }
+        } else {
+          // Xóa localStorage nếu session không hợp lệ
+          localStorage.removeItem('superadminAuthenticated');
+          localStorage.removeItem('superadminUsername');
+        }
+      } catch (error) {
+        console.error('Session check failed:', error);
+        // Xóa localStorage nếu có lỗi
+        localStorage.removeItem('superadminAuthenticated');
+        localStorage.removeItem('superadminUsername');
+      }
+    }
+    
+    // Kiểm tra session khi trang load (chỉ một lần)
+    let sessionChecked = false;
+    if (!sessionChecked) {
+      sessionChecked = true;
+      checkSessionAuth();
+    }
+    
+    // Check rate limit status on page load
+    checkRateLimitStatus();
+  </script>
+</body>
+</html> 
