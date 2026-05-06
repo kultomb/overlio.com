@@ -53,16 +53,76 @@
             const songTitleEl = document.getElementById('songTitle');
             const singerNameEl = document.getElementById('singerName');
             const params = new URLSearchParams(window.location.search);
-            const requestedScale = parseFloat(params.get('scale') || '');
-            const autoScale = Math.min(
-                1,
-                window.innerWidth / 560,
-                window.innerHeight / 140
-            );
-            const finalScale = Number.isFinite(requestedScale) && requestedScale > 0
-                ? requestedScale
-                : autoScale;
-            lowerThird.style.setProperty('--lt-scale', String(Math.max(0.45, Math.min(finalScale, 1.5))));
+
+            function getLtScale() {
+                var raw = parseFloat(getComputedStyle(lowerThird).getPropertyValue('--lt-scale').trim());
+                if (!Number.isFinite(raw)) raw = 1;
+                return Math.max(0.45, Math.min(raw, 1.5));
+            }
+
+            function updateLtScale() {
+                var requestedScale = parseFloat(params.get('scale') || '');
+                var autoScale = Math.min(
+                    1,
+                    window.innerWidth / 560,
+                    window.innerHeight / 140
+                );
+                var finalScale = Number.isFinite(requestedScale) && requestedScale > 0
+                    ? requestedScale
+                    : autoScale;
+                lowerThird.style.setProperty('--lt-scale', String(Math.max(0.45, Math.min(finalScale, 1.5))));
+            }
+
+            function fitSingleLine(el, baseMaxPx, baseMinPx) {
+                if (!el) return;
+                var w = el.clientWidth;
+                if (w <= 0) return;
+                var scale = getLtScale();
+                var maxPx = Math.max(baseMinPx * scale, baseMaxPx * scale);
+                var minPx = Math.max(7, baseMinPx * scale);
+                var size = maxPx;
+                el.style.fontSize = size + 'px';
+                while (size > minPx && el.scrollWidth > w + 0.5) {
+                    size -= 0.5;
+                    el.style.fontSize = size + 'px';
+                }
+                if (el.scrollWidth > w + 0.5) {
+                    el.style.textOverflow = 'ellipsis';
+                } else {
+                    el.style.textOverflow = 'clip';
+                }
+            }
+
+            var refitScheduled = false;
+            function scheduleRefitText() {
+                if (refitScheduled) return;
+                refitScheduled = true;
+                requestAnimationFrame(function () {
+                    refitScheduled = false;
+                    fitSingleLine(songTitleEl, 24, 11);
+                    fitSingleLine(singerNameEl, 15, 9);
+                });
+            }
+
+            function onResize() {
+                updateLtScale();
+                scheduleRefitText();
+            }
+
+            updateLtScale();
+            var resizeTimer = null;
+            window.addEventListener('resize', function () {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(onResize, 80);
+            });
+
+            if (typeof ResizeObserver !== 'undefined') {
+                var ro = new ResizeObserver(function () {
+                    scheduleRefitText();
+                });
+                ro.observe(lowerThird);
+            }
+
             var autoHideTimer = null;
             var AUTO_HIDE_MS = 6000;
 
@@ -104,6 +164,7 @@
                 if (data.visible !== undefined) {
                     setBarVisible(data.visible);
                 }
+                scheduleRefitText();
             }
 
             socket.on('connect', function () {
@@ -138,6 +199,7 @@
             });
 
             setBarVisible(false);
+            scheduleRefitText();
         })();
     </script>
 </body>
