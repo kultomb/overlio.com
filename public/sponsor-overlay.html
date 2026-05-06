@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sponsor Overlay</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: transparent;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sponsor-container {
+            position: fixed;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 100vw;
+            height: 80px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.6) 100%);
+            border-radius: 0;
+            overflow: hidden;
+            display: none;
+            align-items: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border-left: 4px solid #0D5EA6;
+        }
+
+        .sponsor-label {
+            position: absolute;
+            left: 0;
+            background: linear-gradient(135deg, #0D5EA6 0%, #1a237e 100%);
+            color: white;
+            padding: 12px 20px 12px 15px;
+            border-radius: 0 8px 8px 0;
+            font-weight: bold;
+            font-size: 22px;
+            z-index: 10;
+            white-space: nowrap;
+            box-shadow: 0 2px 8px rgba(13, 94, 166, 0.3), 0 0 20px rgba(13, 94, 166, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            animation: labelGlow 2s ease-in-out infinite alternate;
+        }
+
+        .sponsor-text {
+            position: absolute;
+            right: -100%;
+            color: white;
+            font-size: 32px;
+            font-weight: 600;
+            white-space: nowrap;
+            padding: 0 60px;
+            animation: scrollLeft 25s linear infinite;
+            z-index: 5;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            letter-spacing: 0.5px;
+            line-height: 80px;
+        }
+
+        .sponsor-text.animate {
+            animation: scrollLeft 25s linear infinite;
+        }
+
+        .sponsor-text.paused {
+            animation-play-state: paused;
+        }
+
+        @keyframes scrollLeft {
+            0% {
+                right: -100%;
+                opacity: 0;
+            }
+            5% {
+                opacity: 1;
+            }
+            95% {
+                opacity: 1;
+            }
+            100% {
+                right: 100%;
+                opacity: 0;
+            }
+        }
+
+        .sponsor-text.hidden {
+            display: none;
+        }
+
+        @keyframes labelGlow {
+            0% {
+                box-shadow: 0 2px 8px rgba(13, 94, 166, 0.3), 0 0 20px rgba(13, 94, 166, 0.2);
+            }
+            100% {
+                box-shadow: 0 2px 8px rgba(13, 94, 166, 0.3), 0 0 30px rgba(13, 94, 166, 0.4);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="sponsor-container" id="sponsorContainer">
+        <div class="sponsor-label" id="sponsorLabel">NHÀ TÀI TRỢ</div>
+        <div class="sponsor-text" id="sponsorText">Chào mừng đến với trận đấu hôm nay!</div>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <script>
+        // Get tenant ID from URL for multi-tenant support
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Connect to Socket.IO server (always use default namespace)
+        const socket = connectSocket();
+        
+        // Join the tenant room if we have a tenant ID
+        if (tenantId && tenantId !== 'sponsor') {
+            socket.emit('join', { tenantId: tenantId });
+            console.log(`Joined tenant room: /${tenantId}`);
+        }
+        const sponsorContainer = document.getElementById('sponsorContainer');
+        const sponsorLabel = document.getElementById('sponsorLabel');
+        const sponsorText = document.getElementById('sponsorText');
+
+        let isVisible = false;
+        let isPaused = false;
+
+        // Nhận dữ liệu từ server
+        socket.on('sponsorUpdate', (data) => {
+            console.log('Sponsor update received:', data);
+            
+            if (data.label) {
+                sponsorLabel.textContent = data.label.toUpperCase();
+            }
+            
+            if (data.text) {
+                sponsorText.textContent = data.text;
+            }
+            
+            if (data.visible !== undefined) {
+                isVisible = data.visible;
+                sponsorContainer.style.display = isVisible ? 'flex' : 'none';
+            }
+            
+            if (data.paused !== undefined) {
+                isPaused = data.paused;
+                if (isPaused) {
+                    sponsorText.classList.add('paused');
+                } else {
+                    sponsorText.classList.remove('paused');
+                }
+            }
+        });
+
+        // Nhận lệnh ẩn/hiện
+        socket.on('showSponsor', () => {
+            console.log('Show sponsor overlay');
+            sponsorContainer.style.display = 'flex';
+            isVisible = true;
+        });
+
+        socket.on('hideSponsor', () => {
+            console.log('Hide sponsor overlay');
+            sponsorContainer.style.display = 'none';
+            isVisible = false;
+        });
+
+        // Kết nối thành công
+        socket.on('connect', () => {
+            console.log('Sponsor overlay connected to server');
+        });
+
+        // Kết nối bị mất
+        socket.on('disconnect', () => {
+            console.log('Sponsor overlay disconnected from server');
+        });
+    </script>
+</body>
+</html> 

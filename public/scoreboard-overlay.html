@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=450, initial-scale=1.0">
+    <title>Live Scoreboard</title>
+    <link rel="stylesheet" href="/scoreboard.css">
+</head>
+<body>
+    <div class="scoreboard-bar" style="display: none;">
+        <div class="scoreboard-total">
+            <div class="scoreboard-time-group">
+                <div class="scoreboard-main-time" id="mainTimeBox">
+                    <div class="scoreboard-logo-box">
+                        <div class="scoreboard-logo" id="scoreboardLogo">⚽</div>
+                    </div>
+                    <div class="scoreboard-time-bg">
+                        <div class="scoreboard-time-center">
+                            <div class="scoreboard-time" id="matchTime">00:00</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="scoreboard-addedtime-row" id="addedTimeRow" style="display:none;">
+                    <div class="scoreboard-addedtime-time" id="addedTimeClock">0:00</div>
+                    <div class="scoreboard-addedtime-value" id="addedTimeValue">+3</div>
+                </div>
+            </div>
+            <div class="scoreboard-center-wrapper" style="position:relative; z-index:1; margin-left:10px;">
+                <div class="scoreboard-center">
+                    <div class="team-color-bar left" id="leftTeamColorBar"></div>
+                    <div class="team-name left" id="leftTeamName">Home</div>
+                    <div class="score-block" id="leftScore">0</div>
+                    <div class="score-block" id="rightScore">0</div>
+                    <div class="team-name right" id="rightTeamName">Away</div>
+                    <div class="team-color-bar right" id="rightTeamColorBar"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <script src="/scoreboard.js"></script>
+</body>
+</html> 

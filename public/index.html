@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overlio - Hệ Thống Live Scoreboard Chuyên Nghiệp</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Overlio - Hệ thống live scoreboard chuyên nghiệp cho bóng đá, thể thao. Quản lý trận đấu, hiển thị tỷ số, đội hình, thẻ đỏ vàng real-time.">
+    <meta name="keywords" content="live scoreboard, bóng đá, thể thao, tỷ số trực tuyến, quản lý trận đấu, overlio">
+    <meta name="author" content="Overlio Team">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Overlio - Hệ Thống Live Scoreboard Chuyên Nghiệp">
+    <meta property="og:description" content="Hệ thống live scoreboard chuyên nghiệp cho bóng đá và thể thao. Quản lý trận đấu, hiển thị tỷ số real-time.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://overlio.com">
+    <meta property="og:site_name" content="Overlio">
+    <meta property="og:locale" content="vi_VN">
+    
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Overlio - Hệ Thống Live Scoreboard Chuyên Nghiệp">
+    <meta name="twitter:description" content="Hệ thống live scoreboard chuyên nghiệp cho bóng đá và thể thao. Quản lý trận đấu, hiển thị tỷ số real-time.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/icon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    
+    <!-- Canonical URL -->
+    <link rel="canonical" href="https://overlio.com">
+    
+    <!-- DNS Prefetch -->
+    <link rel="dns-prefetch" href="//overlio.com">
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="Overlio">
+    
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --success: #27ae60;
+            --info: #17a2b8;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f8f9fa;
+            --white: #ffffff;
+            --shadow: 0 8px 32px rgba(0,0,0,0.1);
+            --radius: 16px;
+        }
+        
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            min-height: 100vh;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Header */
+        .header {
+            padding: 24px 0;
+            color: var(--white);
+            position: relative;
+            z-index: 100;
+            min-height: 56px;
+            background: transparent;
+        }
+        
+        .header-content {
+            display: flex;
+            align-items: center;
+            flex-direction: row;
+            justify-content: space-between;
+            width: 100%;
+        }
+        
+        .brand {
+            flex: none;
+            display: flex;
+            align-items: center;
+        }
+        
+        .brand h1 {
+            font-size: 2.8em;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e9ecef 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        .brand p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            margin-bottom: 4px;
+        }
+        
+        .brand .developer {
+            font-size: 1em;
+            opacity: 0.8;
+            font-weight: 500;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        
+        .header .menu-btn {
+            display: none;
+            background: rgba(255,255,255,0.1);
+            border: 2px solid rgba(255,255,255,0.3);
+            font-size: 2.4em;
+            color: #fff;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.2s;
+            margin-left: 12px;
+            position: relative;
+            z-index: 1100;
+            width: 44px;
+            height: 44px;
+            align-items: center;
+            justify-content: center;
+        }
+        .menu-btn:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.5);
+            transform: scale(1.05);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; right: 0;
+            width: 280px;
+            height: 100vh;
+            background: var(--white);
+            box-shadow: -4px 0 24px rgba(0,0,0,0.15);
+            z-index: 2000;
+            flex-direction: column;
+            padding: 32px 24px;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .mobile-menu .close-btn {
+            background: none;
+            border: none;
+            font-size: 2.5em;
+            color: var(--dark);
+            position: absolute;
+            top: 16px; right: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: background 0.2s;
+        }
+        
+        .mobile-menu .close-btn:hover {
+            background: var(--light);
+        }
+        
+        .mobile-menu .menu-link {
+            display: block;
+            margin: 20px 0;
+            font-size: 1.2em;
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            border-radius: 12px;
+            padding: 16px 20px;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .mobile-menu .menu-link:hover {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 60px 0 80px 0;
+            color: var(--white);
+        }
+        
+        .hero h2 {
+            font-size: 3.2em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .hero p {
+            font-size: 1.4em;
+            opacity: 0.9;
+            max-width: 600px;
+            margin: 0 auto 40px auto;
+        }
+        
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 32px;
+            margin-bottom: 80px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.95);
+            border-radius: var(--radius);
+            padding: 32px 24px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        
+        
+        
+        .card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+        }
+        
+        .copy-icon {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+            color: var(--dark);
+            border: 2px solid var(--light);
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: all 0.2s;
+            z-index: 2;
+        }
+        
+        .copy-icon:hover, .copy-icon.copied {
+            background: linear-gradient(135deg, var(--success), var(--info));
+            color: var(--white);
+            transform: scale(1.1);
+        }
+        
+        .card-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            display: block;
+        }
+        
+        .card h3 {
+            font-size: 1.5em;
+            margin-bottom: 16px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+        
+        .card p {
+            color: #666;
+            margin-bottom: 24px;
+            line-height: 1.6;
+            font-size: 1.05em;
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            padding: 14px 28px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1.05em;
+            margin: 4px 6px;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 16px rgba(102,126,234,0.3);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(102,126,234,0.4);
+        }
+        
+        .btn-success { 
+            background: linear-gradient(135deg, var(--success) 0%, #229954 100%); 
+            box-shadow: 0 4px 16px rgba(39,174,96,0.3);
+        }
+        .btn-success:hover { box-shadow: 0 8px 24px rgba(39,174,96,0.4); }
+        
+        .btn-warning { 
+            background: linear-gradient(135deg, var(--warning) 0%, #e67e22 100%); 
+            box-shadow: 0 4px 16px rgba(243,156,18,0.3);
+        }
+        .btn-warning:hover { box-shadow: 0 8px 24px rgba(243,156,18,0.4); }
+        
+        .btn-danger { 
+            background: linear-gradient(135deg, var(--danger) 0%, #c0392b 100%); 
+            box-shadow: 0 4px 16px rgba(231,76,60,0.3);
+        }
+        .btn-danger:hover { box-shadow: 0 8px 24px rgba(231,76,60,0.4); }
+        
+        .btn-purple { 
+            background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%); 
+            box-shadow: 0 4px 16px rgba(155,89,182,0.3);
+        }
+        .btn-purple:hover { box-shadow: 0 8px 24px rgba(155,89,182,0.4); }
+        
+        .btn-info { 
+            background: linear-gradient(135deg, var(--info) 0%, #138496 100%); 
+            box-shadow: 0 4px 16px rgba(23,162,184,0.3);
+        }
+        .btn-info:hover { box-shadow: 0 8px 24px rgba(23,162,184,0.4); }
+        
+        /* Features Section */
+        .features {
+            background: rgba(255,255,255,0.1);
+            border-radius: var(--radius);
+            padding: 60px 40px;
+            margin-bottom: 80px;
+            color: var(--white);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .features h2 {
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 2.5em;
+            font-weight: 700;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 32px;
+        }
+        
+        .feature-item {
+            text-align: center;
+            padding: 24px 16px;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-item:hover {
+            background: rgba(255,255,255,0.15);
+            transform: translateY(-4px);
+        }
+        
+        .feature-item i {
+            font-size: 3em;
+            margin-bottom: 16px;
+            display: block;
+        }
+        
+        .feature-item h4 {
+            font-size: 1.3em;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+        
+        .feature-item p {
+            opacity: 0.9;
+            font-size: 1.05em;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            color: var(--white);
+            padding: 40px 0;
+            opacity: 0.9;
+            border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .footer p {
+            margin-bottom: 8px;
+            font-size: 1.1em;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 0 16px; }
+            
+            .brand h1 { font-size: 2.2em; }
+            
+            .hero h2 { font-size: 2.5em; }
+            
+            .hero p { font-size: 1.2em; }
+            
+            .main-content { 
+                grid-template-columns: 1fr; 
+                gap: 24px; 
+            }
+            
+            .card { padding: 24px 20px; }
+            
+            .features { padding: 40px 20px; }
+            
+            .features h2 { font-size: 2em; }
+            
+            .features-grid { 
+                grid-template-columns: 1fr; 
+                gap: 24px; 
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .header-actions { display: none; }
+            .menu-btn { 
+                display: flex !important; 
+                align-items: center;
+                justify-content: center;
+            }
+            .header-content { min-height: 56px; }
+        }
+        
+        @media (max-width: 480px) {
+            .header-content {
+                flex-direction: row;
+                justify-content: space-between;
+                align-items: center;
+            }
+            .brand {
+                flex: none;
+            }
+            .brand h1 { font-size: 1.8em; }
+            .hero h2 { font-size: 2em; }
+            .hero { padding: 40px 0 60px 0; }
+            .card { padding: 20px 16px; }
+            .btn { padding: 12px 24px; font-size: 1em; }
+            .mobile-menu {
+                width: 100%;
+                right: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-content">
+                <div class="brand">
+                    <h1>Overlio</h1>
+                </div>
+                <div class="header-actions">
+                    <a href="/login" class="btn btn-success">Đăng nhập</a>
+                    <a href="/register" class="btn btn-info">Đăng ký</a>
+                </div>
+                <button class="menu-btn" onclick="openMenu()">☰</button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div class="mobile-menu" id="mobileMenu">
+            <button class="close-btn" onclick="closeMenu()">×</button>
+            <a href="/login" class="menu-link">🔑 Đăng nhập</a>
+            <a href="/register" class="menu-link">📝 Đăng ký</a>
+        </div>
+        
+        <!-- Hero Section -->
+        <div class="hero">
+            <h2>Hệ Thống Live Scoreboard Chuyên Nghiệp</h2>
+            <p>Giải pháp toàn diện cho việc quản lý và hiển thị thông tin trận đấu bóng đá, thể thao với công nghệ real-time hiện đại</p>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="card" onclick="showOverlayImage('admin')">
+                <div class="card-icon">🎛️</div>
+                <h3>Admin Panel</h3>
+                <p>Quản lý và điều khiển hệ thống bảng điểm với giao diện trực quan, dễ sử dụng</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('scoreboard')">
+                <div class="card-icon">📊</div>
+                <h3>Bảng Điểm Chính</h3>
+                <p>Hiển thị điểm số, thời gian, bù giờ và thông tin trận đấu với giao diện đẹp mắt</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('lineup')">
+                <div class="card-icon">👥</div>
+                <h3>Đội Hình Thi Đấu</h3>
+                <p>Hiển thị danh sách cầu thủ và huấn luyện viên của cả hai đội một cách rõ ràng</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('lineup-home')">
+                <div class="card-icon">🏠</div>
+                <h3>Đội Nhà</h3>
+                <p>Chỉ hiển thị đội hình và HLV của đội nhà</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('lineup-away')">
+                <div class="card-icon">🛫</div>
+                <h3>Đội Khách</h3>
+                <p>Chỉ hiển thị đội hình và HLV của đội khách</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('cards')">
+                <div class="card-icon">🟡</div>
+                <h3>Thẻ Phạt</h3>
+                <p>Hiển thị thẻ vàng và thẻ đỏ trong trận đấu với animation đẹp mắt</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('goal')">
+                <div class="card-icon">⚽</div>
+                <h3>Bàn Thắng</h3>
+                <p>Hiển thị thông tin bàn thắng và cầu thủ ghi bàn với hiệu ứng ấn tượng</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('substitution')">
+                <div class="card-icon">🔄</div>
+                <h3>Thay Người</h3>
+                <p>Hiển thị thông tin thay người trong trận đấu một cách chuyên nghiệp</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('replay')">
+                <div class="card-icon">🎬</div>
+                <h3>Video Replay</h3>
+                <p>Hiển thị video replay và highlight với chất lượng cao</p>
+            </div>
+            
+            <div class="card" onclick="showOverlayImage('sponsor')">
+                <div class="card-icon">🏢</div>
+                <h3>Nhà Tài Trợ</h3>
+                <p>Hiển thị thông tin nhà tài trợ với thiết kế đẹp mắt và chuyên nghiệp</p>
+            </div>
+
+            <a href="/lower-third/" class="card" style="text-decoration: none; color: inherit; display: block;">
+                <div class="card-icon">🎵</div>
+                <h3>Lower Third (Nhạc)</h3>
+                <p>Overlay góc dưới trái cho tên bài hát & ca sĩ — trong suốt, sẵn sàng cho OBS Browser Source</p>
+            </a>
+        </div>
+        
+        <!-- Features Section -->
+        <div class="features">
+            <h2>✨ Tính Năng Nổi Bật</h2>
+            <div class="features-grid">
+                <div class="feature-item">
+                    <i>⚡</i>
+                    <h4>Real-time Updates</h4>
+                    <p>Cập nhật thời gian thực qua WebSocket, không cần refresh trang</p>
+                </div>
+                <div class="feature-item">
+                    <i>📱</i>
+                    <h4>Responsive Design</h4>
+                    <p>Tương thích hoàn hảo với mọi thiết bị từ desktop đến mobile</p>
+                </div>
+                <div class="feature-item">
+                    <i>🎨</i>
+                    <h4>Customizable</h4>
+                    <p>Tùy chỉnh màu sắc và giao diện theo ý muốn</p>
+                </div>
+                <div class="feature-item">
+                    <i>🔧</i>
+                    <h4>Easy Control</h4>
+                    <p>Điều khiển dễ dàng qua Admin Panel trực quan</p>
+                </div>
+                <div class="feature-item">
+                    <i>🎥</i>
+                    <h4>Stream Ready</h4>
+                    <p>Sẵn sàng tích hợp với OBS/Stream với overlay chuyên nghiệp</p>
+                </div>
+                <div class="feature-item">
+                    <i>🌐</i>
+                    <h4>Multi-language</h4>
+                    <p>Hỗ trợ đa ngôn ngữ, phù hợp mọi đối tượng</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <p>&copy; 2025 Overlio - Live Scoreboard System</p>
+            <p>Phiên bản 2.0 - Hệ thống bảng điểm chuyên nghiệp | Powered by Overlio Team</p>
+            <p><a href="https://overlio.com" style="color: #fff; text-decoration: none;">overlio.com</a></p>
+        </div>
+    </div>
+
+    <!-- Modal hiển thị ảnh overlay -->
+    <div id="overlayModal" style="display:none;position:fixed;z-index:3000;left:0;top:0;width:100vw;height:100vh;background:rgba(0,0,0,0.7);align-items:center;justify-content:center;">
+        <div style="background:#fff;padding:24px 24px 16px 24px;border-radius:16px;max-width:90vw;max-height:90vh;box-shadow:0 8px 32px rgba(0,0,0,0.3);position:relative;display:flex;flex-direction:column;align-items:center;">
+            <button onclick="closeOverlayModal()" style="position:absolute;top:8px;right:8px;font-size:2em;background:none;border:none;cursor:pointer;color:#333;">&times;</button>
+            <img id="overlayModalImg" src="" alt="Overlay Preview" style="max-width:80vw;max-height:70vh;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15);margin-bottom:12px;" />
+            <div id="overlayModalLabel" style="font-size:1.2em;font-weight:600;color:#333;text-align:center;"></div>
+        </div>
+    </div>
+
+    <script>
+        // Copy link functionality
+        // Xóa chức năng copy-icon
+        // Thêm chức năng show overlay image modal
+        function showOverlayImage(type) {
+            const modal = document.getElementById('overlayModal');
+            const img = document.getElementById('overlayModalImg');
+            const label = document.getElementById('overlayModalLabel');
+            let src = '';
+            let text = '';
+            switch(type) {
+                case 'admin':
+                    src = '/assets/admin-panel.png';
+                    text = 'Giao diện Admin Panel';
+                    break;
+                case 'scoreboard':
+                    src = '/assets/scoreboard-overlay.png';
+                    text = 'Overlay Bảng Điểm Chính';
+                    break;
+                case 'lineup':
+                    src = '/assets/lineup-overlay.png';
+                    text = 'Overlay Đội Hình Thi Đấu';
+                    break;
+                case 'lineup-home':
+                    src = '/assets/lineup-home.png';
+                    text = 'Overlay Đội Nhà';
+                    break;
+                case 'lineup-away':
+                    src = '/assets/lineup-away.png';
+                    text = 'Overlay Đội Khách';
+                    break;
+                case 'cards':
+                    src = '/assets/cards-overlay.png';
+                    text = 'Overlay Thẻ Phạt';
+                    break;
+                case 'goal':
+                    src = '/assets/goal-overlay.png';
+                    text = 'Overlay Bàn Thắng';
+                    break;
+                case 'substitution':
+                    src = '/assets/substitution-overlay.png';
+                    text = 'Overlay Thay Người';
+                    break;
+                case 'replay':
+                    src = '/assets/replay-overlay.png';
+                    text = 'Overlay Video Replay';
+                    break;
+                case 'sponsor':
+                    src = '/assets/replay-overlay.png';
+                    text = 'Overlay Nhà Tài Trợ';
+                    break;
+                default:
+                    src = '';
+                    text = '';
+            }
+            if (src) {
+                img.src = src;
+                label.textContent = text;
+                modal.style.display = 'flex';
+            }
+        }
+        function closeOverlayModal() {
+            document.getElementById('overlayModal').style.display = 'none';
+        }
+        document.getElementById('overlayModal').addEventListener('click', function(e) {
+            if (e.target === this) closeOverlayModal();
+        });
+        
+        // Mobile menu functionality
+        function openMenu() {
+            document.getElementById('mobileMenu').style.display = 'flex';
+        }
+        
+        function closeMenu() {
+            document.getElementById('mobileMenu').style.display = 'none';
+        }
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const menu = document.getElementById('mobileMenu');
+            const menuBtn = document.querySelector('.menu-btn');
+            
+            if (menu.style.display === 'flex' && 
+                !menu.contains(event.target) && 
+                !menuBtn.contains(event.target)) {
+                closeMenu();
+            }
+        });
+    </script>
+</body>
+</html> 

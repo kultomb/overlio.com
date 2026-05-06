@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Instant Replay Overlay</title>
+    <link rel="stylesheet" href="/overlays.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        .instant-replay-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .instant-replay-container {
+            background: rgba(0, 0, 0, 0.95);
+            border-radius: 0;
+            padding: 0;
+            box-shadow: none;
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .instant-replay-video {
+            width: 100%;
+            height: 100%;
+            border-radius: 0;
+            box-shadow: none;
+            background: #000;
+            flex: 1;
+            object-fit: cover;
+        }
+        
+        .instant-replay-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: #000;
+            flex: 1;
+        }
+        
+        .instant-replay-label {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 0, 0, 0.8);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 1001;
+        }
+        
+        @media (max-width: 768px) {
+            .instant-replay-container {
+                width: 100vw;
+                height: 100vh;
+            }
+            .instant-replay-label {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="instant-replay-overlay" id="instant-replay-overlay">
+        <div class="instant-replay-container">
+            <div class="instant-replay-label">⚡ INSTANT REPLAY</div>
+            <video id="instant-replay-video" class="instant-replay-video" autoplay muted loop>
+                Your browser does not support the video tag.
+            </video>
+            <iframe id="instant-replay-iframe" class="instant-replay-iframe" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+    <script>
+        // Get tenant ID from URL for multi-tenant support
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Connect to Socket.IO server (always use default namespace)
+        const socket = connectSocket();
+        
+        // Join the tenant room if we have a tenant ID
+        if (tenantId && tenantId !== 'instant-replay') {
+            socket.emit('join', { tenantId: tenantId });
+            console.log(`Joined tenant room: /${tenantId}`);
+        }
+
+        let currentVideoUrl = '';
+        let bufferDuration = 10;
+
+        function showInstantReplay(data) {
+            if (!data.videoUrl) return;
+            
+            currentVideoUrl = data.videoUrl;
+            bufferDuration = data.bufferDuration || 10;
+            
+            const videoElement = document.getElementById('instant-replay-video');
+            const iframeElement = document.getElementById('instant-replay-iframe');
+            
+            // Check if it's a Facebook URL
+            if (data.videoUrl.includes('facebook.com')) {
+                // Hide video element and show iframe
+                videoElement.style.display = 'none';
+                iframeElement.style.display = 'block';
+                iframeElement.src = data.videoUrl;
+            } else {
+                // Show video element and hide iframe
+                videoElement.style.display = 'block';
+                iframeElement.style.display = 'none';
+                videoElement.src = data.videoUrl;
+                videoElement.currentTime = Math.max(0, videoElement.duration - bufferDuration);
+            }
+            
+            // Show the overlay
+            document.getElementById('instant-replay-overlay').style.display = 'flex';
+            
+            console.log(`Instant replay shown: ${bufferDuration}s buffer, URL: ${data.videoUrl}`);
+        }
+
+        function hideInstantReplay() {
+            document.getElementById('instant-replay-overlay').style.display = 'none';
+            const videoElement = document.getElementById('instant-replay-video');
+            const iframeElement = document.getElementById('instant-replay-iframe');
+            
+            videoElement.pause();
+            videoElement.src = '';
+            iframeElement.src = '';
+        }
+
+        // Socket.IO event listeners
+        socket.on('connect', () => console.log('Connected to instant replay overlay server'));
+        socket.on('disconnect', () => console.log('Disconnected from instant replay overlay server'));
+        
+        socket.on('showInstantReplay', (data) => {
+            console.log('Instant replay received:', data);
+            showInstantReplay(data);
+        });
+        
+        socket.on('hideInstantReplay', () => {
+            console.log('Hiding instant replay');
+            hideInstantReplay();
+        });
+
+        // Initialize
+        hideInstantReplay();
+        
+        // Debug: Log when overlay loads
+        console.log('Instant replay overlay loaded for tenant:', tenantId);
+        console.log('Socket connected:', socket.connected);
+    </script>
+</body>
+</html> 

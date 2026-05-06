@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lower Third — OBS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="stage" id="stage">
+        <div class="controls" id="controls">
+            <label class="controls__field">
+                <span>Song title</span>
+                <input type="text" id="inputTitle" value="Lạc Trôi" autocomplete="off" />
+            </label>
+            <label class="controls__field">
+                <span>Singer name</span>
+                <input type="text" id="inputSinger" value="Sơn Tùng M-TP" autocomplete="off" />
+            </label>
+            <div class="controls__actions">
+                <button type="button" class="btn btn-show" id="btnShow">SHOW</button>
+                <button type="button" class="btn btn-hide" id="btnHide">HIDE</button>
+            </div>
+            <p class="controls__hint">Space: toggle · Auto-hide ~6s</p>
+        </div>
+
+        <div
+            class="lower-third"
+            id="lowerThird"
+            role="region"
+            aria-label="Now playing"
+            aria-hidden="true"
+            data-visible="false"
+        >
+            <div class="lower-third__accent" aria-hidden="true"></div>
+            <div class="lower-third__inner">
+                <div class="lower-third__title" id="songTitle">Lạc Trôi</div>
+                <div class="lower-third__singer" id="singerName">Sơn Tùng M-TP</div>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

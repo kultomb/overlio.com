@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Team Lineup Overlay</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            min-width: 100vw;
+            background: transparent;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .lineup-center {
+            max-width: 700px;
+            width: 96vw;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(120deg, rgba(10,42,108,0.85) 0%, rgba(0,114,255,0.85) 100%);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.18);
+            padding: 36px 18px 32px 18px;
+            backdrop-filter: blur(8px);
+        }
+        .team-name {
+            color: #fff;
+            font-size: 2.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            text-align: center;
+            text-shadow: 2px 2px 8px #0008;
+            margin-bottom: 18px;
+        }
+        .coach-label {
+            color: #00bfae;
+            font-size: 1.1em;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 2px;
+            text-align: center;
+        }
+        .coach-name {
+            color: #fff;
+            font-size: 1.2em;
+            font-weight: 500;
+            margin-bottom: 24px;
+            text-align: center;
+            text-shadow: 1px 1px 6px #000a;
+        }
+        .player-list {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .player-row {
+            width: 320px;
+            max-width: 90vw;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: flex-start;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+            font-weight: 400;
+            letter-spacing: 1px;
+            text-shadow: 1px 1px 6px #000a;
+        }
+        .player-number {
+            min-width: 38px;
+            text-align: right;
+            font-weight: bold;
+            color: #00e6c3;
+            margin-right: 18px;
+            font-size: 1.1em;
+        }
+        .player-name {
+            color: #fff;
+            flex: 1;
+            text-align: left;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        @media (max-width: 600px) {
+            .lineup-center {
+                max-width: 98vw;
+                padding: 18px 2vw 18px 2vw;
+            }
+            .player-row { width: 98vw; max-width: 98vw; font-size: 1em; }
+            .team-name { font-size: 1.3em; }
+            .coach-name { font-size: 1em; }
+        }
+    </style>
+</head>
+<body>
+    <div class="lineup-center" id="lineup-home-overlay">
+        <div class="team-name" id="home-team-name">HOME TEAM</div>
+        <div class="coach-label">COACH</div>
+        <div class="coach-name" id="coach-name">NAME</div>
+        <div class="player-list" id="player-list">
+            <!-- Danh sách cầu thủ sẽ render ở đây -->
+        </div>
+    </div>
+    <script>
+        const socket = connectSocket();
+        let currentLineupData = {
+            teamName: 'HOME TEAM',
+            coach: 'NAME',
+            players: [
+                { number: '1', name: 'cầu thủ 1' },
+                { number: '2', name: 'cầu thủ 2' },
+                { number: '3', name: 'cầu thủ 3' },
+                { number: '4', name: 'cầu thủ 4' },
+                { number: '5', name: 'cầu thủ 5' },
+                { number: '6', name: 'cầu thủ 6' },
+                { number: '7', name: 'cầu thủ 7' }
+            ]
+        };
+
+        function showLineup(data = null) {
+            if (data) {
+                currentLineupData.teamName = data.name || 'HOME TEAM';
+                // Use starting players for display, fallback to all players
+                currentLineupData.players = data.startingPlayers || data.players || currentLineupData.players;
+                currentLineupData.coach = data.coach || 'NAME';
+                updateLineupDisplay();
+            }
+            document.getElementById('lineup-home-overlay').style.display = 'flex';
+        }
+        function hideLineup() {
+            document.getElementById('lineup-home-overlay').style.display = 'none';
+        }
+        function updateLineupDisplay() {
+            document.getElementById('home-team-name').textContent = currentLineupData.teamName.toUpperCase();
+            document.getElementById('coach-name').textContent = (currentLineupData.coach || 'NAME').toUpperCase();
+            const playerListDiv = document.getElementById('player-list');
+            playerListDiv.innerHTML = '';
+            currentLineupData.players.forEach((player) => {
+                const row = document.createElement('div');
+                row.className = 'player-row';
+                row.innerHTML = `<span class="player-name">${player.name.toUpperCase()}</span><span class="player-number">${player.number}</span>`;
+                playerListDiv.appendChild(row);
+            });
+        }
+        // Socket.IO event listeners
+        socket.on('connect', () => console.log('Connected to home lineup overlay server'));
+        socket.on('disconnect', () => console.log('Disconnected from home lineup overlay server'));
+        socket.on('showLineup', (data) => {
+            if (data && data.side === 'home') {
+                showLineup(data);
+                if (window.autoHideTimer) clearTimeout(window.autoHideTimer);
+                window.autoHideTimer = setTimeout(() => {
+                    hideLineup();
+                }, 7000);
+            }
+        });
+        socket.on('hideLineup', () => { hideLineup(); });
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hideLineup(); });
+        updateLineupDisplay();
+        hideLineup();
+    </script>
+</body>
+</html> 

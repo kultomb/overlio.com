@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Đăng ký - Overlio Live Scoreboard</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Đăng ký tài khoản mới trên hệ thống Overlio Live Scoreboard để bắt đầu quản lý trận đấu.">
+    <meta name="keywords" content="đăng ký, overlio, live scoreboard, tài khoản mới">
+    <meta name="author" content="Overlio Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Đăng ký - Overlio Live Scoreboard">
+    <meta property="og:description" content="Đăng ký tài khoản mới trên hệ thống Overlio Live Scoreboard để bắt đầu quản lý trận đấu.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://overlio.com/register">
+    <meta property="og:site_name" content="Overlio">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="canonical" href="https://overlio.com/register">
+    
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
+        }
+        .register-container {
+            background: rgba(255,255,255,0.97);
+            border-radius: 18px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 40px 32px 32px 32px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .logo {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .title {
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 8px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            margin-bottom: 24px;
+            font-size: 1em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 0.95em;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e1e1;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+            background: #fff;
+            box-sizing: border-box;
+        }
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        .register-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            box-sizing: border-box;
+        }
+        .register-btn:hover {
+            background: linear-gradient(135deg, #5a6fd8 0%, #6a4190 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.18);
+        }
+        .register-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        .switch-link {
+            display: block;
+            margin-top: 18px;
+            color: #667eea;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .switch-link:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        .error-message, .success-message {
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 20px;
+            font-size: 0.95em;
+            display: none;
+        }
+        .error-message {
+            background: #fdecea;
+            border: 1px solid #f5c6cb;
+            color: #e74c3c;
+        }
+        .success-message {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        .password-requirements, .username-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 8px;
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+        .requirement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+        .requirement:last-child {
+            margin-bottom: 0;
+        }
+        .requirement-icon {
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        .requirement.met {
+            color: #28a745;
+        }
+        .requirement.not-met {
+            color: #dc3545;
+        }
+        @media (max-width: 480px) {
+            .register-container {
+                padding: 20px 16px 20px 16px;
+                margin: 10px;
+                max-width: calc(100vw - 20px);
+                width: calc(100vw - 20px);
+                box-sizing: border-box;
+            }
+            .title { font-size: 1.5em; }
+            .form-group input {
+                padding: 10px 12px;
+                font-size: 16px; /* Tránh zoom trên iOS */
+            }
+            .register-btn {
+                padding: 12px;
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="register-container">
+        <div class="logo">📝</div>
+        <h1 class="title">Đăng ký</h1>
+        <p class="subtitle">Tạo tài khoản mới cho Overlio Live Scoreboard</p>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+        <form id="registerForm" autocomplete="on">
+            <div class="form-group">
+                <label for="customerName">Số điện thoại:</label>
+                <input type="tel" id="customerName" name="customerName" required placeholder="Nhập số điện thoại" pattern="[0-9]+" oninput="validatePhoneNumber(this)">
+            </div>
+            <div class="form-group">
+                <label for="username">Tên đăng nhập:</label>
+                <input type="text" id="username" name="username" required placeholder="Nhập tên đăng nhập" oninput="validateUsername(this)">
+                <div class="username-requirements" id="usernameRequirements">
+                    <div class="requirement" id="req-username-length">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Độ dài từ 3-20 ký tự</span>
+                    </div>
+                    <div class="requirement" id="req-username-format">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Chỉ chứa chữ cái, số và dấu gạch dưới (_)</span>
+                    </div>
+                    <div class="requirement" id="req-username-start">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Không bắt đầu bằng số</span>
+                    </div>
+                    <div class="requirement" id="req-username-admin">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Không chứa từ "admin"</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password">Mật khẩu:</label>
+                <input type="password" id="password" name="password" required placeholder="Nhập mật khẩu" oninput="validatePassword(this)">
+                <div class="password-requirements" id="passwordRequirements">
+                    <div class="requirement" id="req-length">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Tối thiểu 8 ký tự</span>
+                    </div>
+                    <div class="requirement" id="req-uppercase">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Có ít nhất 1 chữ hoa</span>
+                    </div>
+                    <div class="requirement" id="req-lowercase">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Có ít nhất 1 chữ thường</span>
+                    </div>
+                    <div class="requirement" id="req-number">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Có ít nhất 1 số</span>
+                    </div>
+                    <div class="requirement" id="req-special">
+                        <span class="requirement-icon">⭕</span>
+                        <span>Có ít nhất 1 ký tự đặc biệt (!@#$%^&*)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="confirmPassword">Nhập lại mật khẩu:</label>
+                <input type="password" id="confirmPassword" name="confirmPassword" required placeholder="Nhập lại mật khẩu">
+            </div>
+            <button type="submit" class="register-btn" id="registerBtn">Đăng ký</button>
+        </form>
+        <a href="/login" class="switch-link">Đã có tài khoản? Đăng nhập</a>
+    </div>
+    <script>
+        const registerForm = document.getElementById('registerForm');
+        const errorMessage = document.getElementById('errorMessage');
+        const successMessage = document.getElementById('successMessage');
+        const registerBtn = document.getElementById('registerBtn');
+        
+        // Hàm validate số điện thoại
+        function validatePhoneNumber(input) {
+            const phoneNumber = input.value;
+            const phoneRegex = /^[0-9]+$/;
+            
+            if (phoneNumber && !phoneRegex.test(phoneNumber)) {
+                input.setCustomValidity('Số điện thoại chỉ được nhập số');
+                input.style.borderColor = '#e74c3c';
+            } else {
+                input.setCustomValidity('');
+                input.style.borderColor = '#e1e1e1';
+            }
+        }
+
+        // Hàm validate username
+        function validateUsername(input) {
+            const username = input.value;
+            
+            // Các yêu cầu về username
+            const requirements = {
+                length: username.length >= 3 && username.length <= 20,
+                format: /^[a-zA-Z0-9_]+$/.test(username),
+                start: !/^[0-9]/.test(username),
+                admin: !/admin/i.test(username)
+            };
+            
+            // Cập nhật giao diện cho từng yêu cầu
+            Object.keys(requirements).forEach(req => {
+                const element = document.getElementById(`req-username-${req}`);
+                if (element) {
+                    const icon = element.querySelector('.requirement-icon');
+                    
+                    if (requirements[req]) {
+                        element.classList.remove('not-met');
+                        element.classList.add('met');
+                        icon.textContent = '✅';
+                    } else {
+                        element.classList.remove('met');
+                        element.classList.add('not-met');
+                        icon.textContent = '⭕';
+                    }
+                }
+            });
+            
+            // Kiểm tra xem tất cả yêu cầu có được đáp ứng không
+            const allMet = Object.values(requirements).every(req => req);
+            
+            if (username && !allMet) {
+                input.setCustomValidity('Tên đăng nhập không đáp ứng đủ yêu cầu');
+                input.style.borderColor = '#e74c3c';
+            } else {
+                input.setCustomValidity('');
+                input.style.borderColor = '#e1e1e1';
+            }
+            
+            return allMet;
+        }
+
+        // Hàm validate mật khẩu
+        function validatePassword(input) {
+            const password = input.value;
+            
+            // Các yêu cầu về mật khẩu
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /[0-9]/.test(password),
+                special: /[!@#$%^&*]/.test(password)
+            };
+            
+            // Cập nhật giao diện cho từng yêu cầu
+            Object.keys(requirements).forEach(req => {
+                const element = document.getElementById(`req-${req}`);
+                const icon = element.querySelector('.requirement-icon');
+                
+                if (requirements[req]) {
+                    element.classList.remove('not-met');
+                    element.classList.add('met');
+                    icon.textContent = '✅';
+                } else {
+                    element.classList.remove('met');
+                    element.classList.add('not-met');
+                    icon.textContent = '⭕';
+                }
+            });
+            
+            // Kiểm tra xem tất cả yêu cầu có được đáp ứng không
+            const allMet = Object.values(requirements).every(req => req);
+            
+            if (password && !allMet) {
+                input.setCustomValidity('Mật khẩu không đáp ứng đủ yêu cầu');
+                input.style.borderColor = '#e74c3c';
+            } else {
+                input.setCustomValidity('');
+                input.style.borderColor = '#e1e1e1';
+            }
+            
+            return allMet;
+        }
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            errorMessage.style.display = 'none';
+            successMessage.style.display = 'none';
+            const customerName = document.getElementById('customerName').value.trim();
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (!customerName || !username || !password || !confirmPassword) {
+                errorMessage.textContent = 'Vui lòng điền đầy đủ thông tin!';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Kiểm tra định dạng số điện thoại
+            const phoneRegex = /^[0-9]+$/;
+            if (!phoneRegex.test(customerName)) {
+                errorMessage.textContent = 'Số điện thoại không đúng định dạng! Chỉ được nhập số.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Kiểm tra username có đáp ứng đủ yêu cầu không
+            if (!validateUsername(document.getElementById('username'))) {
+                errorMessage.textContent = 'Tên đăng nhập không đáp ứng đủ yêu cầu! Vui lòng kiểm tra các điều kiện bên dưới.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            // Kiểm tra mật khẩu có đáp ứng đủ yêu cầu không
+            if (!validatePassword(document.getElementById('password'))) {
+                errorMessage.textContent = 'Mật khẩu không đáp ứng đủ yêu cầu! Vui lòng kiểm tra các điều kiện bên dưới.';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                errorMessage.textContent = 'Mật khẩu nhập lại không khớp!';
+                errorMessage.style.display = 'block';
+                return;
+            }
+            registerBtn.disabled = true;
+            registerBtn.textContent = 'Đang đăng ký...';
+            try {
+                const response = await fetch(`/api/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ customerName, username, password })
+                });
+                if (response.ok) {
+                    const result = await response.json();
+                    successMessage.textContent = `Đăng ký thành công! Mã khách hàng: ${result.tenantId}. Chuyển hướng đến trang thanh toán...`;
+                    successMessage.style.display = 'block';
+                    setTimeout(() => {
+                        window.location.href = `/payment?phone=${encodeURIComponent(customerName)}`;
+                    }, 2000);
+                } else {
+                    const errorData = await response.json();
+                    errorMessage.textContent = errorData.error || 'Đăng ký thất bại!';
+                    errorMessage.style.display = 'block';
+                }
+            } catch (err) {
+                errorMessage.textContent = 'Lỗi kết nối máy chủ!';
+                errorMessage.style.display = 'block';
+            } finally {
+                registerBtn.disabled = false;
+                registerBtn.textContent = 'Đăng ký';
+            }
+        });
+    </script>
+</body>
+</html> 

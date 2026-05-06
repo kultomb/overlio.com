@@ -1,0 +1,30 @@
+{
+  "name": "Overlio Live Scoreboard",
+  "short_name": "Overlio",
+  "description": "Hệ thống Live Scoreboard chuyên nghiệp cho bóng đá và thể thao",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#667eea",
+  "theme_color": "#667eea",
+  "orientation": "landscape",
+  "icons": [
+    {
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["sports", "utilities"],
+  "lang": "vi",
+  "dir": "ltr"
+} 
