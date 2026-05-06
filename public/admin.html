@@ -1,0 +1,1741 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Admin Panel - Overlio Live Scoreboard</title>
+    
+    <!-- SEO Meta Tags -->
+    <meta name="description" content="Admin Panel - Quản lý trận đấu và bảng điểm với Overlio Live Scoreboard">
+    <meta name="keywords" content="admin panel, overlio, quản lý trận đấu, live scoreboard">
+    <meta name="author" content="Overlio Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="Admin Panel - Overlio Live Scoreboard">
+    <meta property="og:description" content="Admin Panel - Quản lý trận đấu và bảng điểm với Overlio Live Scoreboard">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://overlio.com/admin">
+    <meta property="og:site_name" content="Overlio">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="canonical" href="https://overlio.com/admin">
+    
+    <link rel="stylesheet" href="/admin.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .admin-container {
+            width: 100%;
+            max-width: 500px;
+            background: rgba(255, 255, 255, 0.95);
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 6px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            height: 40px;
+            flex-shrink: 0;
+        }
+
+        .header h1 {
+            font-size: 1em;
+            margin: 0;
+        }
+
+        .status {
+            position: absolute;
+            right: 10px;
+            display: flex;
+            align-items: center;
+        }
+
+        .logout-btn {
+            position: absolute;
+            left: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .content {
+            flex: 1;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            overflow-y: auto;
+            align-content: flex-start;
+            padding-bottom: 60px;
+            scroll-behavior: smooth;
+        }
+
+        /* Custom scrollbar styling */
+        .content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .content::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
+        }
+
+        /* Individual control blocks with their own styling */
+        .teams-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .scoreboard-control {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e8f5e8;
+        }
+
+        .scoreboard-control .btn {
+            width: 100%;
+            font-size: 0.8em;
+            padding: 6px 8px;
+        }
+
+        .score-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .time-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design for Time Block */
+        @media (max-width: 768px) {
+            .time-block {
+                width: 100%;
+                margin-bottom: 15px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time-block {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+        }
+
+        .lineups-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 100%;
+            box-sizing: border-box;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .lineup-show-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            margin-top: 5px;
+        }
+        
+        .lineup-show-buttons .btn:last-child {
+            grid-column: 1 / -1;
+            margin-top: 1px;
+        }
+
+        .lineups-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .lineup-team-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .goal-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            min-height: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .substitution-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            min-height: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .cards-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            min-height: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .penalty-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 100%;
+            box-sizing: border-box;
+            min-height: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+        }
+
+
+
+
+
+        .sponsor-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            min-height: 207px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .replay-block {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 8px;
+            padding: 8px;
+            border: 2px solid #e8f5e8;
+            display: flex;
+            flex-direction: column;
+            height: fit-content;
+            width: 50%;
+            box-sizing: border-box;
+            min-height: 150px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        /* Responsive Design for All Blocks */
+        @media (max-width: 768px) {
+            .goal-block,
+            .substitution-block,
+            .cards-block,
+            .sponsor-block,
+            .replay-block {
+                width: 100%;
+                margin-bottom: 15px;
+                padding: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .goal-block,
+            .substitution-block,
+            .cards-block,
+            .sponsor-block,
+            .replay-block {
+                padding: 15px;
+                margin-bottom: 20px;
+            }
+        }
+
+
+
+
+
+        .form-group {
+            margin-bottom: 1px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: 600;
+            color: #34495e;
+            font-size: 0.7em;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 6px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            transition: border-color 0.3s ease;
+            height: 32px;
+            box-sizing: border-box;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        textarea {
+            resize: none;
+            min-height: 50px;
+            font-family: monospace;
+            line-height: 1.2;
+        }
+
+        #leftTeamLineup, #rightTeamLineup {
+            min-height: 140px;
+            height: 140px;
+        }
+
+        .team-row {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            margin-bottom: 1px;
+        }
+
+        .team-input {
+            flex: 1;
+        }
+
+        .team-input-row {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .color-picker {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            background: none;
+            box-sizing: border-box;
+            padding: 0;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+
+        .color-picker::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        .color-picker::-webkit-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        .color-picker::-moz-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        .score-teams {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            gap: 10px;
+        }
+
+        .score-teams .team-name {
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .score-controls {
+            display: grid;
+            grid-template-columns: 1fr auto 1fr;
+            gap: 2px;
+            align-items: start;
+            margin-bottom: 2px;
+        }
+
+
+
+        .score-input {
+            text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .score-separator {
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            text-align: center;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            border: none;
+            padding: 6px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 2px;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+            color: #212529;
+        }
+
+        .btn-purple {
+            background: linear-gradient(135deg, #6f42c1 0%, #5a2d91 100%);
+        }
+
+        .btn-lineup-left {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border: 1px solid #ee5a52;
+        }
+        .btn-lineup-left:hover {
+            background: linear-gradient(135deg, #ee5a52, #d63031);
+            transform: translateY(-1px);
+        }
+
+        .btn-lineup-right {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border: 1px solid #44a08d;
+        }
+        .btn-lineup-right:hover {
+            background: linear-gradient(135deg, #44a08d, #00b894);
+            transform: translateY(-1px);
+        }
+
+        .btn-info {
+            background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
+        }
+
+        .btn-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+        }
+
+        .substitution-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .goal-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+
+        .substitution-section {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .goal-section {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .card-section {
+            display: flex;
+            flex-direction: column;
+            width: 50%;
+            box-sizing: border-box;
+        }
+
+        .substitution-buttons {
+            display: flex;
+            justify-content: center;
+            margin-top: 5px;
+            flex: 1;
+            align-items: flex-end;
+        }
+
+        .substitution-buttons .btn {
+            width: 100%;
+            margin: 0;
+            min-height: 40px;
+            font-size: 11px;
+        }
+        .score-btn-left {
+            background: linear-gradient(135deg, #ff0000 0%, #cc0000 100%);
+        }
+        .score-btn-right {
+            background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
+        }
+
+        .btn-large {
+            min-height: 50px;
+            font-size: 16px;
+            font-weight: 700;
+            padding: 12px 16px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border: 2px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .btn-large:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .scoreboard-control {
+            margin-top: 15px;
+            text-align: center;
+        }
+
+        .time-row {
+            display: flex;
+            gap: 2px;
+            align-items: center;
+            margin-bottom: 2px;
+        }
+
+        .time-input {
+            flex: 1;
+        }
+
+        .period-select {
+            flex: 1;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            margin-right: 4px;
+        }
+
+        .status-connected {
+            background: #27ae60;
+            animation: pulse 2s infinite;
+        }
+
+        .status-disconnected {
+            background: #e74c3c;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .cards-container {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+        }
+        .card-section {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+        }
+
+        .card-btn {
+            min-height: 32px;
+            font-size: 12px;
+        }
+
+        .penalty-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .penalty-section {
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+        }
+
+        .team-name {
+            font-size: 10px;
+            font-weight: 600;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 6px 10px;
+            border-radius: 6px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .team-name.left-team {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+            color: white;
+            border-color: #c44569;
+        }
+
+        .team-name.right-team {
+            background: linear-gradient(135deg, #4ecdc4, #44a08d);
+            color: white;
+            border-color: #26d0ce;
+        }
+
+        .penalty-team-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 10px;
+            text-align: center;
+            padding: 6px 10px;
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+
+        .penalty-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            margin-bottom: 10px;
+        }
+
+        .penalty-btn {
+            min-height: 32px;
+            font-size: 11px;
+        }
+
+        .penalty-status {
+            font-size: 0.8em;
+            color: #666;
+            text-align: center;
+            margin-top: 8px;
+            margin-bottom: 5px;
+        }
+
+        .penalty-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            margin-top: 5px;
+            margin-bottom: 10px;
+        }
+
+        .yellow-card {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+        }
+
+        .red-card {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .goal-buttons {
+            margin-top: 8px;
+        }
+
+        .goal-btn {
+            background: linear-gradient(135deg, #ffc400 0%, #cc0000 100%);
+            width: 100%;
+            height: 32px;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .goal-btn::after {
+            content: '⚽';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 16px;
+        }
+
+        .score-btn-container {
+            display: flex;
+            width: 100%;
+            height: 40px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .score-btn-minus {
+            flex: 0 0 40%;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #a71e2a;
+        }
+
+        .score-btn-plus {
+            flex: 0 0 60%;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #1e7e34;
+        }
+
+        .score-btn-minus:hover {
+            background: linear-gradient(135deg, #c82333, #a71e2a);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .score-btn-plus:hover {
+            background: linear-gradient(135deg, #20c997, #17a2b8);
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+        }
+
+
+
+        .lineup-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            margin-bottom: 0;
+        }
+
+        .substitution-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1px;
+            margin-bottom: 2px;
+        }
+
+        .substitution-btn {
+            min-height: 32px;
+        }
+        .time-compact {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .time-buttons-row {
+            display: flex;
+            gap: 2px;
+            margin-top: 2px;
+        }
+        .time-buttons-row .btn {
+            flex: 1;
+            min-height: 32px;
+            font-size: 11px;
+        }
+        .time-buttons-row .btn-large {
+            min-height: 35px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        /* Responsive Design for Time Buttons */
+        @media (max-width: 768px) {
+            .time-buttons-row {
+                flex-direction: column;
+                gap: 4px;
+                margin-top: 4px;
+            }
+            
+            .time-buttons-row .btn {
+                min-height: 40px;
+                font-size: 13px;
+                width: 100%;
+            }
+            
+            .time-buttons-row .btn-large {
+                min-height: 45px;
+                font-size: 14px;
+                order: -1; /* Đưa Start button lên đầu */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .time-buttons-row {
+                gap: 6px;
+                margin-top: 6px;
+            }
+            
+            .time-buttons-row .btn {
+                min-height: 44px;
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            
+            .time-buttons-row .btn-large {
+                min-height: 48px;
+                font-size: 15px;
+                font-weight: bold;
+            }
+        }
+        .jump-time-container {
+            margin-top: 10px;
+            display: flex;
+            align-items: end;
+            gap: 5px;
+        }
+        .jump-time-container .form-group {
+            flex: 1;
+            margin-bottom: 0;
+        }
+        .jump-time-container .btn {
+            min-height: 32px;
+            white-space: nowrap;
+        }
+
+        /* Responsive Design for Jump Time Container */
+        @media (max-width: 768px) {
+            .jump-time-container {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 12px;
+            }
+            
+            .jump-time-container .form-group {
+                margin-bottom: 0;
+            }
+            
+            .jump-time-container .btn {
+                min-height: 40px;
+                width: 100%;
+                font-size: 14px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .jump-time-container {
+                gap: 10px;
+                margin-top: 15px;
+            }
+            
+            .jump-time-container .btn {
+                min-height: 44px;
+                font-size: 15px;
+                padding: 10px 16px;
+            }
+        }
+        .sponsor-controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2px;
+            margin-bottom: 2px;
+        }
+        .sponsor-controls .btn {
+            min-height: 32px;
+            font-size: 11px;
+        }
+
+        /* Tab System */
+        .tab-container {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .tab-buttons {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            flex-shrink: 0;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            background: transparent;
+            color: #6c757d;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        .tab-content {
+            flex: 1;
+            display: none;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0;
+            align-content: flex-start;
+            padding-bottom: 60px;
+            scroll-behavior: smooth;
+        }
+
+        /* Responsive Design for Tab Content */
+        @media (max-width: 768px) {
+            .tab-content.active {
+                flex-direction: column;
+                gap: 15px;
+                padding-bottom: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .tab-content.active {
+                gap: 20px;
+                padding-bottom: 100px;
+            }
+        }
+
+        .tab-content::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .tab-content::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb {
+            background: #667eea;
+            border-radius: 4px;
+        }
+
+        .tab-content::-webkit-scrollbar-thumb:hover {
+            background: #5a6fd8;
+        }
+
+        /* Ensure penalty block is fully visible */
+        .penalty-block:last-child {
+            margin-bottom: 40px;
+        }
+
+        /* Additional spacing for penalty block */
+        .penalty-block {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Ensure proper spacing in control tab */
+        #control-tab {
+            padding-bottom: 80px;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="admin-container">
+        <div class="header">
+            <button class="logout-btn" onclick="logout()">Đăng xuất</button>
+            <h1>Overlio Live Scoreboard</h1>
+            <div class="status">
+                <span class="status-indicator" id="connectionStatus"></span>
+            </div>
+        </div>
+
+        <div class="tab-container">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('control')">🎮 Điều khiển</button>
+                <button class="tab-btn" onclick="switchTab('settings')">⚙️ Cài đặt</button>
+            </div>
+
+            <!-- Tab 1: Điều khiển -->
+            <div id="control-tab" class="tab-content active">
+                <!-- Teams -->
+                <div class="teams-block">
+                    <h2 class="section-title">Teams</h2>
+                    
+                    <div class="team-row">
+                        <label>Left:</label>
+                        <div class="team-input-row">
+                            <div class="form-group team-input">
+                                <input type="text" id="leftTeamName" placeholder="Team name">
+                            </div>
+                            <input type="color" id="leftTeamColor" class="color-picker" value="#ff0000">
+                            <input type="color" id="leftTeamColor2" class="color-picker" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <div class="team-row">
+                        <label>Right:</label>
+                        <div class="team-input-row">
+                            <div class="form-group team-input">
+                                <input type="text" id="rightTeamName" placeholder="Team name">
+                            </div>
+                            <input type="color" id="rightTeamColor" class="color-picker" value="#0066cc">
+                            <input type="color" id="rightTeamColor2" class="color-picker" value="#ffffff">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" onclick="updateTeams()">Update Teams</button>
+                    
+                    <!-- Scoreboard Overlay Show/Hide Control -->
+                    <div class="scoreboard-control">
+                        <button class="btn btn-warning btn-large" id="scoreboardToggleBtn" onclick="toggleScoreboard()">
+                            📊 Show Scoreboard
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Time -->
+                <div class="time-block">
+                    <h2 class="section-title">Time</h2>
+                    
+                    <div class="time-compact">
+                        <!-- Hàng 1: Time và Period -->
+                        <div class="time-row">
+                            <div class="form-group time-input">
+                                <label>Time:</label>
+                                <input type="text" id="matchTime" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}">
+                            </div>
+                            <div class="form-group period-select">
+                                <label>Period:</label>
+                                <select id="period" onchange="updateTimeOnPeriodChange()">
+                                    <option value="1st Half">1st Half</option>
+                                    <option value="2nd Half">2nd Half</option>
+                                    <option value="Extra Time 1st Half">Extra Time 1st Half</option>
+                                    <option value="Extra Time 2nd Half">Extra Time 2nd Half</option>
+                                    <option value="Penalty Shootout">Penalty Shootout</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng 2: Field Type và Added Time -->
+                        <div class="time-row">
+                            <div class="form-group" style="flex: 2;">
+                                <label>Field Type:</label>
+                                <select id="fieldType" onchange="updatePeriodOptions()">
+                                    <option value="7">Sân 7 (35' hiệp)</option>
+                                    <option value="7-30">Sân 7 (30' hiệp)</option>
+                                    <option value="11">Sân 11 (45' hiệp)</option>
+                                    <option value="5">Sân 5 (20' hiệp)</option>
+                                </select>
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label>Added Time:</label>
+                                <select id="addedTime" style="text-align: center;">
+                                    <option value="+0">+0</option>
+                                    <option value="+1">+1</option>
+                                    <option value="+2">+2</option>
+                                    <option value="+3">+3</option>
+                                    <option value="+4">+4</option>
+                                    <option value="+5">+5</option>
+                                    <option value="+6">+6</option>
+                                    <option value="+7">+7</option>
+                                    <option value="+8">+8</option>
+                                    <option value="+9">+9</option>
+                                    <option value="+10">+10</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hàng 3: Buttons -->
+                        <div class="time-buttons-row">
+                            <button class="btn btn-success" onclick="updateTime()">Update Time</button>
+                            <button class="btn btn-danger" onclick="resetTimer()">🔄 Reset</button>
+                            <button class="btn btn-success btn-large" id="timerToggleBtn" onclick="toggleTimer()">▶️ Start</button>
+                        </div>
+
+                        <!-- Hàng 4: Jump to Time -->
+                        <div class="jump-time-container">
+                            <div class="form-group">
+                                <label>Jump to Time:</label>
+                                <input type="text" id="jumpTime" placeholder="00:00" pattern="[0-9]{2}:[0-9]{2}">
+                            </div>
+                            <button class="btn btn-warning" onclick="jumpToTime()">⏩ Jump & Start</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Score -->
+                <div class="score-block">
+                    <h2 class="section-title">Score</h2>
+                    
+                    <div class="score-teams">
+                        <h3 class="team-name left-team" id="leftTeamNameScore">Home</h3>
+                        <h3 class="team-name right-team" id="rightTeamNameScore">Away</h3>
+                    </div>
+                    
+                    <div class="score-controls">
+                        <input type="number" id="leftScore" class="score-input" min="0" max="99" value="0">
+                        <div class="score-separator">-</div>
+                        <input type="number" id="rightScore" class="score-input" min="0" max="99" value="0">
+                    </div>
+
+                    <div class="btn-grid">
+                        <div class="score-btn-container">
+                            <button class="btn score-btn-minus" onclick="decrementScore('left')">-1</button>
+                            <button class="btn score-btn-plus" onclick="incrementScore('left')">+1</button>
+                        </div>
+                        <div class="score-btn-container">
+                            <button class="btn score-btn-minus" onclick="decrementScore('right')">-1</button>
+                            <button class="btn score-btn-plus" onclick="incrementScore('right')">+1</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-danger" onclick="resetScores()">Reset Scores</button>
+                    <button class="btn btn-success" onclick="updateScores()">Update Scores</button>
+                </div>
+
+                                <!-- Goal -->
+                <div class="goal-block">
+                    <h2 class="section-title">Goal</h2>
+                    
+                    <div class="goal-container">
+                        <!-- Home Team Goal -->
+                        <div class="goal-section">
+                            <h3 class="team-name left-team" id="leftTeamNameGoal">Home</h3>
+                            <div class="form-group">
+                                <select id="homeGoalPlayer">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="goal-buttons">
+                                <button class="btn goal-btn" onclick="showSelectedGoal('home')"></button>
+                            </div>
+                        </div>
+
+                        <!-- Away Team Goal -->
+                        <div class="goal-section">
+                            <h3 class="team-name right-team" id="rightTeamNameGoal">Away</h3>
+                            <div class="form-group">
+                                <select id="awayGoalPlayer">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="goal-buttons">
+                                <button class="btn goal-btn" onclick="showSelectedGoal('away')"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Substitution -->
+                <div class="substitution-block">
+                    <h2 class="section-title">Substitution</h2>
+                    
+                    <div class="substitution-container">
+                        <!-- Home Team Substitution -->
+                        <div class="substitution-section">
+                            <h3 class="team-name left-team" id="leftTeamNameSub">Home</h3>
+                            <div class="form-group">
+                                <label>Player Out:</label>
+                                <select id="homeSubPlayerOut">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Player In:</label>
+                                <select id="homeSubPlayerIn">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="substitution-buttons">
+                                <button class="btn btn-success substitution-btn" onclick="showSelectedSubstitution('home')">🔄 Show</button>
+                            </div>
+                        </div>
+
+                        <!-- Away Team Substitution -->
+                        <div class="substitution-section">
+                            <h3 class="team-name right-team" id="rightTeamNameSub">Away</h3>
+                            <div class="form-group">
+                                <label>Player Out:</label>
+                                <select id="awaySubPlayerOut">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Player In:</label>
+                                <select id="awaySubPlayerIn">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="substitution-buttons">
+                                <button class="btn btn-success substitution-btn" onclick="showSelectedSubstitution('away')">🔄 Show</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Cards -->
+                <div class="cards-block">
+                    <h2 class="section-title">Cards</h2>
+                    
+                    <div class="cards-container">
+                        <!-- Home Team Cards -->
+                        <div class="card-section">
+                            <h3 class="team-name left-team" id="leftTeamNameCard">Home</h3>
+                            <div class="form-group">
+                                <select id="homeCardPlayer">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="card-buttons">
+                                <button class="btn card-btn yellow-card" onclick="showSelectedCard('yellow', 'home')"></button>
+                                <button class="btn card-btn red-card" onclick="showSelectedCard('red', 'home')"></button>
+                            </div>
+                        </div>
+
+                        <!-- Away Team Cards -->
+                        <div class="card-section">
+                            <h3 class="team-name right-team" id="rightTeamNameCard">Away</h3>
+                            <div class="form-group">
+                                <select id="awayCardPlayer">
+                                    <option value="">Select Player</option>
+                                </select>
+                            </div>
+                            <div class="card-buttons">
+                                <button class="btn card-btn yellow-card" onclick="showSelectedCard('yellow', 'away')"></button>
+                                <button class="btn card-btn red-card" onclick="showSelectedCard('red', 'away')"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Penalty -->
+                <div class="penalty-block">
+                    <h2 class="section-title">Penalty</h2>
+                    
+                    <div class="penalty-container">
+                        <!-- Left Team Penalty -->
+                        <div class="penalty-section">
+                            <h3 class="team-name left-team" id="leftTeamNameDisplay">Home</h3>
+                            <div class="penalty-controls">
+                                <button class="btn btn-success penalty-btn" onclick="addPenalty('left', true)">⚽ Goal</button>
+                                <button class="btn btn-danger penalty-btn" onclick="addPenalty('left', false)">❌ Miss</button>
+                            </div>
+                            <div class="penalty-status">
+                                <span id="leftPenaltyCount">0</span> goals / <span id="leftPenaltyTotal">0</span> shots
+                            </div>
+                        </div>
+
+                        <!-- Right Team Penalty -->
+                        <div class="penalty-section">
+                            <h3 class="team-name right-team" id="rightTeamNameDisplay">Away</h3>
+                            <div class="penalty-controls">
+                                <button class="btn btn-success penalty-btn" onclick="addPenalty('right', true)">⚽ Goal</button>
+                                <button class="btn btn-danger penalty-btn" onclick="addPenalty('right', false)">❌ Miss</button>
+                            </div>
+                            <div class="penalty-status">
+                                <span id="rightPenaltyCount">0</span> goals / <span id="rightPenaltyTotal">0</span> shots
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="penalty-actions">
+                        <button class="btn btn-warning" onclick="resetPenalties()">🔄 Reset</button>
+                        <button class="btn btn-info" id="penaltyToggleBtn" onclick="togglePenalty()">👁️ Show</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Cài đặt -->
+            <div id="settings-tab" class="tab-content">
+                <!-- Lineups -->
+                <div class="lineups-block">
+                    <h2 class="section-title">Lineups</h2>
+                    
+                    <div class="lineups-container">
+                        <!-- Left Team -->
+                        <div class="lineup-team-section">
+                            <div class="form-group">
+                                <label id="leftTeamLabel" style="color: #ff0000;">Manchester United:</label>
+                                <textarea id="leftTeamLineup" rows="12" placeholder="#HLV&#10;Bruno Fernandes 18&#10;Harry Maguire 5&#10;Marcus Rashford 10&#10;Jadon Sancho 25&#10;Scott McTominay 39&#10;Fred 17&#10;Luke Shaw 23" autocomplete="off" spellcheck="false">#José Mourinho&#10;Cristiano Ronaldo 7&#10;Bruno Fernandes 18&#10;Harry Maguire 5&#10;Marcus Rashford 10&#10;Paul Pogba 6&#10;David de Gea 1</textarea>
+                                <small style="color: #666; font-size: 11px; margin-top: 5px; display: block;">
+                                    💡 <strong>Hướng dẫn:</strong> Dòng đầu tiên bắt đầu bằng # là HLV. Chỉ hiển thị đội hình chính trong overlay.
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Right Team -->
+                        <div class="lineup-team-section">
+                            <div class="form-group">
+                                <label id="rightTeamLabel" style="color: #0066cc;">PSG:</label>
+                                <textarea id="rightTeamLineup" rows="12" placeholder="#HLV&#10;Neymar Jr 11&#10;Kylian Mbappé 7&#10;Lionel Messi 30&#10;Angel Di Maria 11&#10;Marco Verratti 6&#10;Marquinhos 5&#10;Achraf Hakimi 2" autocomplete="off" spellcheck="false">#Pep Guardiola&#10;Lionel Messi 10&#10;Neymar Jr 11&#10;Kylian Mbappé 7&#10;Marquinhos 5&#10;Marco Verratti 6&#10;Gianluigi Donnarumma 99</textarea>
+                                <small style="color: #666; font-size: 11px; margin-top: 5px; display: block;">
+                                    💡 <strong>Hướng dẫn:</strong> Dòng đầu tiên bắt đầu bằng # là HLV. Chỉ hiển thị đội hình chính trong overlay.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success" onclick="updateLineups()">Update Lineups</button>
+                    
+                    <div class="lineup-show-buttons">
+                                <button class="btn btn-lineup-left" id="lineupHomeBtn" onclick="showLineupOverlay('home')"><span id="lineupHomeBtnName">Home</span></button>
+        <button class="btn btn-lineup-right" id="lineupAwayBtn" onclick="showLineupOverlay('away')"><span id="lineupAwayBtnName">Away</span></button>
+                        <button class="btn btn-info" onclick="showLineupOverlay('both')">SHOW ALL</button>
+                    </div>
+                </div>
+
+                <!-- Sponsor -->
+                <div class="sponsor-block">
+                    <h2 class="section-title">Sponsor</h2>
+                    
+                    <div class="form-group">
+                        <label>Label:</label>
+                        <input type="text" id="sponsorLabel" placeholder="NHÀ TÀI TRỢ" value="NHÀ TÀI TRỢ">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Text:</label>
+                        <textarea id="sponsorText" rows="3" placeholder="Nhập tên các nhà tài trợ..." style="min-height: 90px;">Chào mừng đến với trận đấu hôm nay! Cảm ơn các nhà tài trợ đã đồng hành cùng chúng tôi.</textarea>
+                    </div>
+
+                    <div class="sponsor-controls">
+                        <button class="btn btn-success" onclick="updateSponsor()">Update Sponsor</button>
+                        <button class="btn btn-warning" id="sponsorToggleBtn" onclick="toggleSponsor()">👁️ Show</button>
+                    </div>
+                </div>
+
+                <!-- Lower third (OBS nhạc) — đồng bộ với overlay /:tenant/lower-third -->
+                <div class="sponsor-block">
+                    <h2 class="section-title">Lower third (nhạc / OBS)</h2>
+
+                    <div class="form-group">
+                        <label>Danh sách (mỗi cặp 2 dòng: tên bài, rồi ca sĩ):</label>
+                        <textarea id="lowerThirdLines" rows="8" placeholder="Lạc trôi&#10;Sơn Tùng M-TP&#10;Nơi này có anh&#10;Bảo Anh" style="min-height: 140px; width: 100%;" autocomplete="off" spellcheck="false"></textarea>
+                    </div>
+
+                    <div class="sponsor-controls" style="flex-wrap: wrap; gap: 8px;">
+                        <button type="button" class="btn btn-success" onclick="updateLowerThird()">Cập nhật</button>
+                    </div>
+                    <p style="margin: 10px 0 6px; font-size: 0.9em; opacity: 0.9;">OBS tự ẩn sau 6 giây mỗi lần hiện. Nút theo từng bài:</p>
+                    <div class="sponsor-controls" id="lowerThirdSlotButtons" style="flex-wrap: wrap; gap: 8px;"></div>
+                </div>
+
+                <!-- Instant Replay -->
+                <div class="replay-block">
+                    <h2 class="section-title">⚡ Instant Replay (Live Buffer)</h2>
+                    
+                    <div class="form-group">
+                        <label>Video URL:</label>
+                        <input type="url" id="replayVideoUrl" placeholder="" value="">
+                    </div>
+
+                    <button class="btn btn-success" onclick="updateReplayUrl()">Update URL</button>
+
+                    <div class="form-group">
+                        <label>Buffer Duration:</label>
+                        <select id="bufferDuration" style="width: 100%; padding: 8px; margin-bottom: 12px;">
+                            <option value="5">5 giây</option>
+                            <option value="10" selected>10 giây</option>
+                            <option value="15">15 giây</option>
+                            <option value="30">30 giây</option>
+                        </select>
+                    </div>
+
+                    <div class="instant-replay-buttons" style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                        <button class="btn btn-danger" onclick="startInstantReplay()" id="startBufferBtn">🔴 Start Buffer</button>
+                        <button class="btn btn-warning" onclick="stopInstantReplay()" id="stopBufferBtn" disabled>⏹️ Stop Buffer</button>
+                        <button class="btn btn-info" onclick="playInstantReplay()" id="playReplayBtn" disabled>▶️ Play Replay</button>
+                        <button class="btn btn-secondary" onclick="hideInstantReplay()" id="hideReplayBtn" disabled>👁️ Hide</button>
+                    </div>
+
+                    <div class="buffer-status" style="padding: 10px; background: #f8f9fa; border-radius: 6px; font-size: 0.9em;">
+                        <div id="bufferStatus">Buffer: Chưa khởi động</div>
+                        <div id="bufferTime">Thời gian: 0s / 10s</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/admin.js"></script>
+    
+    <script>
+        // Tab switching functionality
+        function switchTab(tabName) {
+            // Hide all tab contents
+            const tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            const tabButtons = document.querySelectorAll('.tab-btn');
+            tabButtons.forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show selected tab content
+            const selectedTab = document.getElementById(tabName + '-tab');
+            if (selectedTab) {
+                selectedTab.classList.add('active');
+            }
+            
+            // Add active class to clicked button
+            const clickedButton = event.target;
+            clickedButton.classList.add('active');
+        }
+
+        // Function to update lineup labels with team names and colors
+        function updateLineupLabels() {
+            const leftTeamName = document.getElementById('leftTeamName').value || 'Left Team';
+            const rightTeamName = document.getElementById('rightTeamName').value || 'Right Team';
+            const leftTeamColor = document.getElementById('leftTeamColor').value || '#ff0000';
+            const rightTeamColor = document.getElementById('rightTeamColor').value || '#0066cc';
+
+            // Update left team label
+            const leftTeamLabel = document.getElementById('leftTeamLabel');
+            leftTeamLabel.textContent = leftTeamName + ':';
+            leftTeamLabel.style.color = leftTeamColor;
+
+            // Update right team label
+            const rightTeamLabel = document.getElementById('rightTeamLabel');
+            rightTeamLabel.textContent = rightTeamName + ':';
+            rightTeamLabel.style.color = rightTeamColor;
+
+            // Update lineup button names
+            const lineupHomeBtnName = document.getElementById('lineupHomeBtnName');
+            const lineupAwayBtnName = document.getElementById('lineupAwayBtnName');
+            
+            if (lineupHomeBtnName) {
+                lineupHomeBtnName.textContent = leftTeamName;
+            }
+            if (lineupAwayBtnName) {
+                lineupAwayBtnName.textContent = rightTeamName;
+            }
+        }
+
+        // Function to update goal titles
+        function updateGoalTitles() {
+            const leftTeamName = document.getElementById('leftTeamName').value || 'HOME';
+            const rightTeamName = document.getElementById('rightTeamName').value || 'AWAY';
+            const leftTeamColor = document.getElementById('leftTeamColor').value || '#ff0000';
+            const rightTeamColor = document.getElementById('rightTeamColor').value || '#0066cc';
+
+            const homeGoalTitle = document.getElementById('homeGoalTitle');
+            const awayGoalTitle = document.getElementById('awayGoalTitle');
+            
+            if (homeGoalTitle) {
+                homeGoalTitle.textContent = leftTeamName;
+                homeGoalTitle.style.color = leftTeamColor;
+            }
+            if (awayGoalTitle) {
+                awayGoalTitle.textContent = rightTeamName;
+                awayGoalTitle.style.color = rightTeamColor;
+            }
+        }
+
+        // Function to update card titles
+        function updateCardTitles() {
+            const leftTeamName = document.getElementById('leftTeamName').value || 'HOME';
+            const rightTeamName = document.getElementById('rightTeamName').value || 'AWAY';
+            const leftTeamColor = document.getElementById('leftTeamColor').value || '#ff0000';
+            const rightTeamColor = document.getElementById('rightTeamColor').value || '#0066cc';
+
+            const homeCardTitle = document.getElementById('homeCardTitle');
+            const awayCardTitle = document.getElementById('awayCardTitle');
+            
+            if (homeCardTitle) {
+                homeCardTitle.textContent = leftTeamName;
+                homeCardTitle.style.color = leftTeamColor;
+            }
+            if (awayCardTitle) {
+                awayCardTitle.textContent = rightTeamName;
+                awayCardTitle.style.color = rightTeamColor;
+            }
+        }
+
+        // Function to update all team titles
+        function updateAllTeamTitles() {
+            const leftTeamName = document.getElementById('leftTeamName').value || 'HOME';
+            const rightTeamName = document.getElementById('rightTeamName').value || 'AWAY';
+            const leftTeamColor = document.getElementById('leftTeamColor').value || '#ff0000';
+            const rightTeamColor = document.getElementById('rightTeamColor').value || '#0066cc';
+
+            // Update all team name displays
+            const teamNameElements = [
+                'leftTeamNameDisplay',
+                'rightTeamNameDisplay',
+                'leftTeamNameGoal',
+                'rightTeamNameGoal',
+                'leftTeamNameSub',
+                'rightTeamNameSub',
+                'leftTeamNameCard',
+                'rightTeamNameCard',
+                'leftTeamNameScore',
+                'rightTeamNameScore'
+            ];
+
+            teamNameElements.forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    if (id.startsWith('left')) {
+                        element.textContent = leftTeamName;
+                    } else {
+                        element.textContent = rightTeamName;
+                    }
+                }
+            });
+
+            // Call existing functions
+            updateLineupLabels();
+            updateGoalTitles();
+            updateCardTitles();
+        }
+
+        // Add event listeners to team name inputs
+        document.addEventListener('DOMContentLoaded', function() {
+            const leftTeamInput = document.getElementById('leftTeamName');
+            const rightTeamInput = document.getElementById('rightTeamName');
+            const leftTeamColor = document.getElementById('leftTeamColor');
+            const rightTeamColor = document.getElementById('rightTeamColor');
+
+            if (leftTeamInput) leftTeamInput.addEventListener('input', updateAllTeamTitles);
+            if (rightTeamInput) rightTeamInput.addEventListener('input', updateAllTeamTitles);
+            if (leftTeamColor) leftTeamColor.addEventListener('change', updateAllTeamTitles);
+            if (rightTeamColor) rightTeamColor.addEventListener('change', updateAllTeamTitles);
+
+            // Clear any cached lineup data
+            const leftTeamLineup = document.getElementById('leftTeamLineup');
+            const rightTeamLineup = document.getElementById('rightTeamLineup');
+            
+            if (leftTeamLineup) {
+                // Clear any browser cache for this textarea
+                leftTeamLineup.setAttribute('autocomplete', 'off');
+                leftTeamLineup.setAttribute('spellcheck', 'false');
+            }
+            
+            if (rightTeamLineup) {
+                // Clear any browser cache for this textarea
+                rightTeamLineup.setAttribute('autocomplete', 'off');
+                rightTeamLineup.setAttribute('spellcheck', 'false');
+            }
+
+            // Initial update
+            updateAllTeamTitles();
+        });
+
+        // Global variable to track scoreboard visibility
+        let scoreboardVisible = true;
+
+        // Function to toggle scoreboard visibility
+        function toggleScoreboard() {
+            const toggleBtn = document.getElementById('scoreboardToggleBtn');
+            
+            // Get tenant ID from URL path
+            const pathParts = window.location.pathname.split('/').filter(part => part);
+            const tenantId = pathParts[0] || 'default';
+            
+            console.log('Current URL:', window.location.pathname);
+            console.log('Path parts:', pathParts);
+            console.log('Toggling scoreboard overlay for tenant:', tenantId);
+            
+            if (scoreboardVisible) {
+                // Hide scoreboard overlay
+                toggleBtn.innerHTML = '📊 Show Scoreboard';
+                toggleBtn.classList.remove('btn-info');
+                toggleBtn.classList.add('btn-warning');
+                scoreboardVisible = false;
+                
+                console.log('Hiding scoreboard overlay...');
+                
+                // Send hide command to server
+                fetch('/api/scoreboard/hide', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tenantId: tenantId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Hide scoreboard response:', data);
+                })
+                .catch(error => console.error('Error hiding scoreboard:', error));
+                
+            } else {
+                // Show scoreboard overlay
+                toggleBtn.innerHTML = '📊 Hide Scoreboard';
+                toggleBtn.classList.remove('btn-warning');
+                toggleBtn.classList.add('btn-info');
+                scoreboardVisible = true;
+                
+                console.log('Showing scoreboard overlay...');
+                
+                // Send show command to server
+                fetch('/api/scoreboard/show', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ tenantId: tenantId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Show scoreboard response:', data);
+                })
+                .catch(error => console.error('Error showing scoreboard:', error));
+            }
+        }
+
+        // Function to initialize scoreboard state
+        function initializeScoreboardState() {
+            const toggleBtn = document.getElementById('scoreboardToggleBtn');
+            
+            if (toggleBtn) {
+                // Default to hidden state
+                scoreboardVisible = false;
+                
+                // Update button state
+                toggleBtn.innerHTML = '📊 Show Scoreboard';
+                toggleBtn.classList.remove('btn-info');
+                toggleBtn.classList.add('btn-warning');
+            }
+        }
+
+        // Initialize scoreboard state when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeScoreboardState();
+        });
+    </script>
+</body>
+</html> 

@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Substitution Overlay</title>
+    <link rel="stylesheet" href="/overlays.css">
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/tenant-utils.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: transparent;
+        }
+        .cards-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            pointer-events: none;
+            z-index: 1000;
+        }
+        .card-bar {
+            margin-top: 60px;
+            display: flex;
+            align-items: stretch;
+            background: linear-gradient(90deg, #0a1e5e 80%, #0a1e5e 100%);
+            border-radius: 8px 8px 0 0;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            min-width: 600px;
+            min-height: 90px;
+            max-width: 900px;
+            width: 60vw;
+            position: relative;
+        }
+        .team-color-indicator {
+            width: 8px;
+            background: #ff0000;
+            border-radius: 8px 0 0 0;
+        }
+        .card-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            padding: 0 20px;
+        }
+        .player-info {
+            font-size: 2.2em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 0.2em;
+            text-shadow: 1px 1px 6px #000a;
+        }
+        .team-name {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #ffcc00;
+            text-shadow: 1px 1px 4px #000a;
+            margin-top: 5px;
+            letter-spacing: 1px;
+        }
+        .sub-info-row {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-bottom: 0.5em;
+        }
+        .sub-time {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 1px 1px 4px #000a;
+        }
+        .sub-score {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #ffcc00;
+            text-shadow: 1px 1px 4px #000a;
+        }
+        .sub-arrows {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            padding-right: 20px;
+        }
+        .sub-arrow-down {
+            color: #ff3333;
+            font-size: 2em;
+        }
+        .sub-arrow-up {
+            color: #33cc33;
+            font-size: 2em;
+        }
+        @media (max-width: 700px) {
+            .card-bar {
+                min-width: 320px;
+                width: 98vw;
+                padding: 0;
+                min-height: 70px;
+            }
+            .card-main {
+                padding: 0 8px;
+            }
+            .player-info {
+                font-size: 1.2em;
+            }
+            .team-name {
+                font-size: 0.9em;
+            }
+            .sub-time, .sub-score {
+                font-size: 1.2em;
+            }
+            .sub-arrows {
+                gap: 15px;
+                padding-right: 15px;
+            }
+            .sub-arrow-down, .sub-arrow-up {
+                font-size: 1.5em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .card-bar {
+                min-width: 280px;
+                width: 95vw;
+                min-height: 60px;
+                margin-top: 40px;
+            }
+            .card-main {
+                padding: 0 6px;
+            }
+            .player-info {
+                font-size: 1em;
+                letter-spacing: 1px;
+            }
+            .team-name {
+                font-size: 0.8em;
+            }
+            .sub-time, .sub-score {
+                font-size: 1em;
+            }
+            .sub-info-row {
+                margin-bottom: 0.3em;
+            }
+            .sub-arrows {
+                gap: 10px;
+                padding-right: 10px;
+            }
+            .sub-arrow-down, .sub-arrow-up {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cards-overlay" id="substitution-overlay">
+        <div>
+            <div class="card-bar">
+                <div class="team-color-indicator"></div>
+                <div class="card-main">
+                    <div class="team-name" id="sub-team-name">Home</div>
+                    <div class="sub-info-row">
+                        <span class="sub-time" id="sub-time">00:00</span>
+                        <span class="sub-score" id="sub-score">0 - 0</span>
+                    </div>
+                    <div class="player-info" id="sub-player-out-info">
+                        <span id="sub-player-out-number">7</span> <span id="sub-player-out">Cristiano Ronaldo</span>
+                    </div>
+                    <div class="player-info" id="sub-player-in-info">
+                        <span id="sub-player-in-number">9</span> <span id="sub-player-in">Marcus Rashford</span>
+                    </div>
+                </div>
+                <div class="sub-arrows">
+                    <span class="sub-arrow-down">&#8595;</span>
+                    <span class="sub-arrow-up">&#8593;</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        // Get tenant ID from URL for multi-tenant support
+        const pathParts = window.location.pathname.split('/').filter(part => part);
+        const tenantId = pathParts[0];
+        
+        // Connect to Socket.IO server (always use default namespace)
+        const socket = connectSocket();
+        
+        // Join the tenant room if we have a tenant ID
+        if (tenantId && tenantId !== 'substitution') {
+            socket.emit('join', { tenantId: tenantId });
+            console.log(`Joined tenant room: /${tenantId}`);
+        }
+        let currentSubData = {
+            playerOut: 'Cristiano Ronaldo',
+            playerIn: 'Marcus Rashford',
+            playerOutNumber: '7',
+            playerInNumber: '9',
+            team: 'Home',
+            teamColor: '#ff0000'
+        };
+
+        function showSubstitution(data = null) {
+            if (data) {
+                currentSubData = { ...currentSubData, ...data };
+                updateSubstitutionDisplay();
+            }
+            document.getElementById('substitution-overlay').style.display = 'flex';
+        }
+
+        function hideSubstitution() {
+            document.getElementById('substitution-overlay').style.display = 'none';
+        }
+
+        function updateSubstitutionDisplay() {
+            document.getElementById('sub-team-name').textContent = currentSubData.team.toUpperCase();
+            document.getElementById('sub-time').textContent = currentSubData.time || '00:00';
+            document.getElementById('sub-score').textContent = currentSubData.score || '0 - 0';
+            document.getElementById('sub-player-out').textContent = currentSubData.playerOut.toUpperCase();
+            document.getElementById('sub-player-in').textContent = currentSubData.playerIn.toUpperCase();
+            document.getElementById('sub-player-out-number').textContent = currentSubData.playerOutNumber;
+            document.getElementById('sub-player-in-number').textContent = currentSubData.playerInNumber;
+            
+            // Update team color indicator
+            const teamColorIndicator = document.querySelector('.team-color-indicator');
+            if (teamColorIndicator) {
+                // Use team color from server data, fallback to default colors
+                let teamColor = currentSubData.teamColor || '#ff0000';
+                if (!currentSubData.teamColor) {
+                    // Fallback logic for backward compatibility
+                    if (currentSubData.team === 'HOME' || currentSubData.team === 'tuấn vũ') {
+                        teamColor = '#ff0000'; // red for home team
+                    } else if (currentSubData.team === 'AWAY' || currentSubData.team === 'ha bg 123') {
+                        teamColor = '#0066cc'; // blue for away team
+                    }
+                }
+                teamColorIndicator.style.background = teamColor;
+            }
+        }
+
+        // Socket.IO event listeners
+        socket.on('connect', () => console.log('Connected to substitution overlay server'));
+        socket.on('disconnect', () => console.log('Disconnected from substitution overlay server'));
+        socket.on('showSubstitution', (data) => {
+            showSubstitution(data);
+            if (window.autoHideTimer) clearTimeout(window.autoHideTimer);
+            window.autoHideTimer = setTimeout(() => {
+                hideSubstitution();
+            }, 4000);
+        });
+        socket.on('hideSubstitution', () => {
+            hideSubstitution();
+        });
+        // Keyboard shortcut: Escape to hide
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') hideSubstitution();
+        });
+        // Initialize with default data
+        updateSubstitutionDisplay();
+        hideSubstitution();
+    </script>
+</body>
+</html> 
