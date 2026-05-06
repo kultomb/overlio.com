@@ -2183,10 +2183,15 @@ io.on('connection', (socket) => {
             };
         }
         const ld = tenantInfo.tenant.lowerThirdData;
+        // Đồng bộ nội dung ô nhập từ admin (không cần bấm Cập nhật trước khi Show)
+        if (payload && payload.linesText !== undefined && payload.linesText !== null) {
+            ld.linesText = String(payload.linesText);
+        }
         normalizeLowerThirdData(ld);
         const tracks = ld.tracks || [];
-        const idx = payload && typeof payload.index === 'number' ? payload.index : 0;
-        if (idx < 0 || idx >= tracks.length) return;
+        const rawIdx = payload && payload.index !== undefined && payload.index !== null ? payload.index : 0;
+        const idx = Math.floor(Number(rawIdx));
+        if (!Number.isFinite(idx) || idx < 0 || idx >= tracks.length) return;
 
         if (ld.visible && ld.activeIndex === idx) {
             ld.visible = false;

@@ -283,10 +283,13 @@ function renderLowerThirdSlotButtons(data) {
         btn.type = 'button';
         const isActive = !!(data && data.visible && data.activeIndex === i);
         btn.className = 'btn ' + (isActive ? 'btn-danger' : 'btn-warning');
-        btn.textContent = isActive ? `${i + 1} 🙈 Hide` : `${i + 1} 👁️ Show`;
+        btn.textContent = isActive ? `${i + 1} Hide` : `${i + 1} Show`;
         const idx = i;
         btn.addEventListener('click', () => {
-            socket.emit('toggleLowerThirdSlot', { index: idx });
+            socket.emit('toggleLowerThirdSlot', {
+                index: idx,
+                linesText: lowerThirdLines ? lowerThirdLines.value : undefined
+            });
         });
         lowerThirdSlotButtons.appendChild(btn);
     }
@@ -301,6 +304,13 @@ if (lowerThirdLines) {
             tracks: localTracks,
             linesText: lowerThirdLines.value
         });
+    });
+
+    // Render ngay khi vào trang để luôn thấy nút 1/2/3...
+    renderLowerThirdSlotButtons({
+        visible: false,
+        activeIndex: 0,
+        tracks: parseLowerThirdLinesClient(lowerThirdLines.value || '')
     });
 }
 
@@ -363,7 +373,9 @@ socket.on('teamUpdate', (data) => {
         rightTeamName.value = data.rightTeam.toUpperCase();
         
         // Update all team titles and dropdowns when receiving team data
-        updateAllTeamTitles();
+        if (typeof window.updateAllTeamTitles === 'function') {
+            window.updateAllTeamTitles();
+        }
         updateTeamDropdowns();
     }
 });
@@ -497,21 +509,29 @@ socket.on('lineupData', (data) => {
 });
 
 // Color picker event listeners
-leftTeamColor.addEventListener('input', (e) => {
-    updateScoreButtonColors();
-});
-rightTeamColor.addEventListener('input', (e) => {
-    updateScoreButtonColors();
-});
+if (leftTeamColor) {
+    leftTeamColor.addEventListener('input', () => {
+        updateScoreButtonColors();
+    });
+}
+if (rightTeamColor) {
+    rightTeamColor.addEventListener('input', () => {
+        updateScoreButtonColors();
+    });
+}
 
 // Dropdown event listeners
-homeCardPlayer.addEventListener('change', (e) => {
-    console.log('Home card player changed:', e.target.value);
-});
+if (homeCardPlayer) {
+    homeCardPlayer.addEventListener('change', (e) => {
+        console.log('Home card player changed:', e.target.value);
+    });
+}
 
-awayCardPlayer.addEventListener('change', (e) => {
-    console.log('Away card player changed:', e.target.value);
-});
+if (awayCardPlayer) {
+    awayCardPlayer.addEventListener('change', (e) => {
+        console.log('Away card player changed:', e.target.value);
+    });
+}
 
 
 
@@ -519,13 +539,14 @@ awayCardPlayer.addEventListener('change', (e) => {
 
 // Team functions
 const updateTeams = () => {
+    if (!leftTeamName || !rightTeamName || !leftTeamColor || !rightTeamColor) return;
     // Ensure team names are always uppercase but preserve spaces
     const leftTeam = (leftTeamName.value || 'HOME').toUpperCase();
     const rightTeam = (rightTeamName.value || 'AWAY').toUpperCase();
     const leftColor = leftTeamColor.value;
     const rightColor = rightTeamColor.value;
-    const leftColor2 = leftTeamColor2.value;
-    const rightColor2 = rightTeamColor2.value;
+    const leftColor2 = leftTeamColor2 ? leftTeamColor2.value : '#ffffff';
+    const rightColor2 = rightTeamColor2 ? rightTeamColor2.value : '#ffffff';
     console.log('Sending team update:', { leftTeam, rightTeam, leftColor, rightColor, leftColor2, rightColor2 });
     socket.emit('updateTeams', { leftTeam, rightTeam, leftColor, rightColor, leftColor2, rightColor2 });
     
@@ -534,7 +555,9 @@ const updateTeams = () => {
     rightTeamName.value = rightTeam;
     
     // Update all team labels and titles
-    updateAllTeamTitles();
+    if (typeof window.updateAllTeamTitles === 'function') {
+        window.updateAllTeamTitles();
+    }
     updateTeamDropdowns();
     updatePlayerDropdowns();
     updateScoreButtonColors();
@@ -810,6 +833,12 @@ const toggleSponsor = () => {
 const updateLowerThird = () => {
     const linesText = lowerThirdLines ? lowerThirdLines.value : '';
     socket.emit('updateLowerThird', { linesText });
+    // Cập nhật nút tức thì, không cần chờ server round-trip
+    renderLowerThirdSlotButtons({
+        ...(lastLowerThirdServerData || { visible: false, activeIndex: 0 }),
+        tracks: parseLowerThirdLinesClient(linesText),
+        linesText
+    });
     showNotification('Đã cập nhật Lower third!');
 };
 window.updateLowerThird = updateLowerThird;
@@ -970,14 +999,15 @@ const adjustBrightness = (hex, percent) => {
 };
 
 const updateTeamDropdowns = () => {
+    if (!leftTeamName || !rightTeamName) return;
     const leftTeam = (leftTeamName.value || 'HOME').toUpperCase();
     const rightTeam = (rightTeamName.value || 'AWAY').toUpperCase();
     
     console.log('Updating team dropdowns:', { leftTeam, rightTeam });
     
     // Update card team titles
-    homeCardTitle.textContent = leftTeam;
-    awayCardTitle.textContent = rightTeam;
+    if (homeCardTitle) homeCardTitle.textContent = leftTeam;
+    if (awayCardTitle) awayCardTitle.textContent = rightTeam;
     
     // Update goal team titles
     const homeGoalTitle = document.getElementById('homeGoalTitle');
@@ -1387,88 +1417,82 @@ const scheduleAutoSave = () => {
 };
 
 // Add event listeners for auto-save
-[leftScore, rightScore].forEach(element => element.addEventListener('input', scheduleAutoSave));
-[leftTeamName, rightTeamName].forEach(element => element.addEventListener('change', scheduleAutoSave));
-[leftTeamColor, rightTeamColor].forEach(element => element.addEventListener('change', scheduleAutoSave));
+[leftScore, rightScore].filter(Boolean).forEach((element) => element.addEventListener('input', scheduleAutoSave));
+[leftTeamName, rightTeamName].filter(Boolean).forEach((element) => element.addEventListener('change', scheduleAutoSave));
+[leftTeamColor, rightTeamColor].filter(Boolean).forEach((element) => element.addEventListener('change', scheduleAutoSave));
+
+function setElTextColor(id, text, color) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.textContent = text;
+    if (color !== undefined && color !== null) el.style.color = color;
+}
 
 function updateDynamicButtonLabels() {
+    if (!leftTeamName || !rightTeamName || !leftTeamColor || !rightTeamColor) return;
     const leftName = (leftTeamName.value || 'HOME').toUpperCase();
     const rightName = (rightTeamName.value || 'AWAY').toUpperCase();
     const leftColor = leftTeamColor.value;
     const rightColor = rightTeamColor.value;
-    
-    // Update score button names
-    document.getElementById('scoreBtnLeftName').textContent = leftName;
-    document.getElementById('scoreBtnRightName').textContent = rightName;
-    
-    // Update lineup button names
-    document.getElementById('lineupHomeBtnName').textContent = leftName;
-    document.getElementById('lineupAwayBtnName').textContent = rightName;
-    
-    // Update lineup labels with team names and colors
-    document.getElementById('leftTeamLabel').textContent = `${leftName}:`;
-    document.getElementById('leftTeamLabel').style.color = leftColor;
-    
-    document.getElementById('rightTeamLabel').textContent = `${rightName}:`;
-    document.getElementById('rightTeamLabel').style.color = rightColor;
-    
-    // Update card team titles with team names and colors
-    document.getElementById('homeCardTitle').textContent = leftName;
-    document.getElementById('homeCardTitle').style.color = leftColor;
-    
-    document.getElementById('awayCardTitle').textContent = rightName;
-    document.getElementById('awayCardTitle').style.color = rightColor;
-    
-    // Update goal team titles with team names and colors
-    document.getElementById('homeGoalTitle').textContent = leftName;
-    document.getElementById('homeGoalTitle').style.color = leftColor;
-    
-    document.getElementById('awayGoalTitle').textContent = rightName;
-    document.getElementById('awayGoalTitle').style.color = rightColor;
-    
-    // Update substitution team titles with team names and colors
-    document.getElementById('homeSubTitle').textContent = leftName;
-    document.getElementById('homeSubTitle').style.color = leftColor;
-    
-    document.getElementById('awaySubTitle').textContent = rightName;
-    document.getElementById('awaySubTitle').style.color = rightColor;
+
+    setElTextColor('scoreBtnLeftName', leftName);
+    setElTextColor('scoreBtnRightName', rightName);
+    setElTextColor('lineupHomeBtnName', leftName);
+    setElTextColor('lineupAwayBtnName', rightName);
+    setElTextColor('leftTeamLabel', `${leftName}:`, leftColor);
+    setElTextColor('rightTeamLabel', `${rightName}:`, rightColor);
+    setElTextColor('homeCardTitle', leftName, leftColor);
+    setElTextColor('awayCardTitle', rightName, rightColor);
+    setElTextColor('homeGoalTitle', leftName, leftColor);
+    setElTextColor('awayGoalTitle', rightName, rightColor);
+    setElTextColor('homeSubTitle', leftName, leftColor);
+    setElTextColor('awaySubTitle', rightName, rightColor);
 }
 
 function syncAllButtonColors() {
+    if (!leftTeamColor || !rightTeamColor) return;
     const leftColor = leftTeamColor.value;
     const rightColor = rightTeamColor.value;
-    document.getElementById('scoreBtnLeft').style.background = leftColor;
-    document.getElementById('scoreBtnRight').style.background = rightColor;
-    document.getElementById('lineupHomeBtn').style.background = leftColor;
-    document.getElementById('lineupAwayBtn').style.background = rightColor;
+    const scoreLeft = document.getElementById('scoreBtnLeft');
+    const scoreRight = document.getElementById('scoreBtnRight');
+    const lineupHome = document.getElementById('lineupHomeBtn');
+    const lineupAway = document.getElementById('lineupAwayBtn');
+    if (scoreLeft) scoreLeft.style.background = leftColor;
+    if (scoreRight) scoreRight.style.background = rightColor;
+    if (lineupHome) lineupHome.style.background = leftColor;
+    if (lineupAway) lineupAway.style.background = rightColor;
 }
 
 // Gọi khi đổi màu hoặc đổi tên đội
-leftTeamColor.addEventListener('input', syncAllButtonColors);
-rightTeamColor.addEventListener('input', syncAllButtonColors);
-leftTeamName.addEventListener('input', syncAllButtonColors);
-rightTeamName.addEventListener('input', syncAllButtonColors);
+if (leftTeamColor) leftTeamColor.addEventListener('input', syncAllButtonColors);
+if (rightTeamColor) rightTeamColor.addEventListener('input', syncAllButtonColors);
+if (leftTeamName) leftTeamName.addEventListener('input', syncAllButtonColors);
+if (rightTeamName) rightTeamName.addEventListener('input', syncAllButtonColors);
 window.addEventListener('DOMContentLoaded', syncAllButtonColors);
 
 // Gọi khi load trang
 window.addEventListener('DOMContentLoaded', updateDynamicButtonLabels);
 
 // Auto-update team names to uppercase and sync all labels
-leftTeamName.addEventListener('input', () => {
-    const value = leftTeamName.value;
-    if (value) {
-        leftTeamName.value = value.toUpperCase();
-    }
-    updateDynamicButtonLabels();
-});
+if (leftTeamName) {
+    leftTeamName.addEventListener('input', () => {
+        const value = leftTeamName.value;
+        if (value) {
+            leftTeamName.value = value.toUpperCase();
+        }
+        updateDynamicButtonLabels();
+    });
+}
 
-rightTeamName.addEventListener('input', () => {
-    const value = rightTeamName.value;
-    if (value) {
-        rightTeamName.value = value.toUpperCase();
-    }
-    updateDynamicButtonLabels();
-});
+if (rightTeamName) {
+    rightTeamName.addEventListener('input', () => {
+        const value = rightTeamName.value;
+        if (value) {
+            rightTeamName.value = value.toUpperCase();
+        }
+        updateDynamicButtonLabels();
+    });
+}
 
 // Instant Replay variables
 let currentReplayUrl = '';
@@ -2019,48 +2043,48 @@ const updatePenaltyTitles = () => {
     }
 };
 
-// Add penalty titles to the update function
-const originalUpdateAllTeamTitles = updateAllTeamTitles;
-updateAllTeamTitles = function() {
-    originalUpdateAllTeamTitles();
-    updatePenaltyTitles();
-    
-    // Update lineup labels
-    const leftTeamName = document.getElementById('leftTeamName').value || 'Left Team';
-    const rightTeamName = document.getElementById('rightTeamName').value || 'Right Team';
-    const leftTeamColor = document.getElementById('leftTeamColor').value || '#ff0000';
-    const rightTeamColor = document.getElementById('rightTeamColor').value || '#0066cc';
+// Bọc updateAllTeamTitles từ admin.html (định nghĩa sau thẻ script admin.js) — tránh ReferenceError
+window.addEventListener('DOMContentLoaded', () => {
+    const base = window.updateAllTeamTitles;
+    if (typeof base !== 'function') {
+        console.warn('updateAllTeamTitles không tìm thấy (admin.html)');
+        return;
+    }
+    window.updateAllTeamTitles = function () {
+        base();
+        updatePenaltyTitles();
 
-    // Update left team label
-    const leftTeamLabel = document.getElementById('leftTeamLabel');
-    if (leftTeamLabel) {
-        leftTeamLabel.textContent = leftTeamName + ':';
-        leftTeamLabel.style.color = leftTeamColor;
-    }
+        const lt = document.getElementById('leftTeamName');
+        const rt = document.getElementById('rightTeamName');
+        const lc = document.getElementById('leftTeamColor');
+        const rc = document.getElementById('rightTeamColor');
+        const leftTeamNameVal = (lt && lt.value) || 'Left Team';
+        const rightTeamNameVal = (rt && rt.value) || 'Right Team';
+        const leftTeamColorVal = (lc && lc.value) || '#ff0000';
+        const rightTeamColorVal = (rc && rc.value) || '#0066cc';
 
-    // Update right team label
-    const rightTeamLabel = document.getElementById('rightTeamLabel');
-    if (rightTeamLabel) {
-        rightTeamLabel.textContent = rightTeamName + ':';
-        rightTeamLabel.style.color = rightTeamColor;
-    }
+        const leftTeamLabel = document.getElementById('leftTeamLabel');
+        if (leftTeamLabel) {
+            leftTeamLabel.textContent = leftTeamNameVal + ':';
+            leftTeamLabel.style.color = leftTeamColorVal;
+        }
 
-    // Update lineup button names
-    const lineupHomeBtnName = document.getElementById('lineupHomeBtnName');
-    const lineupAwayBtnName = document.getElementById('lineupAwayBtnName');
-    
-    if (lineupHomeBtnName) {
-        lineupHomeBtnName.textContent = leftTeamName;
-    }
-    if (lineupAwayBtnName) {
-        lineupAwayBtnName.textContent = rightTeamName;
-    }
-    
-    // Update penalty overlay if visible
-    if (penaltyVisible) {
-        updatePenaltyOverlay();
-    }
-};
+        const rightTeamLabel = document.getElementById('rightTeamLabel');
+        if (rightTeamLabel) {
+            rightTeamLabel.textContent = rightTeamNameVal + ':';
+            rightTeamLabel.style.color = rightTeamColorVal;
+        }
+
+        const lineupHomeBtnName = document.getElementById('lineupHomeBtnName');
+        const lineupAwayBtnName = document.getElementById('lineupAwayBtnName');
+        if (lineupHomeBtnName) lineupHomeBtnName.textContent = leftTeamNameVal;
+        if (lineupAwayBtnName) lineupAwayBtnName.textContent = rightTeamNameVal;
+
+        if (penaltyVisible) {
+            updatePenaltyOverlay();
+        }
+    };
+});
 
 // Initialize penalty display
 updatePenaltyDisplay();
