@@ -52,6 +52,17 @@
             const lowerThird = document.getElementById('lowerThird');
             const songTitleEl = document.getElementById('songTitle');
             const singerNameEl = document.getElementById('singerName');
+            const params = new URLSearchParams(window.location.search);
+            const requestedScale = parseFloat(params.get('scale') || '');
+            const autoScale = Math.min(
+                1,
+                window.innerWidth / 560,
+                window.innerHeight / 140
+            );
+            const finalScale = Number.isFinite(requestedScale) && requestedScale > 0
+                ? requestedScale
+                : autoScale;
+            lowerThird.style.setProperty('--lt-scale', String(Math.max(0.45, Math.min(finalScale, 1.5))));
             var autoHideTimer = null;
             var AUTO_HIDE_MS = 6000;
 
