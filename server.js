@@ -341,24 +341,24 @@ app.get('/register', (req, res) => {
 });
 
 // Load superadmin config
+const envUsername = process.env.SUPERADMIN_USERNAME || 'superadmin';
+const envPassword = process.env.SUPERADMIN_PASSWORD;
 let superadminConfig = null;
-try {
-  const configPath = path.join(__dirname, 'superadmin-config.json');
-  superadminConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
-} catch (error) {
-  const envUsername = process.env.SUPERADMIN_USERNAME || 'superadmin';
-  const envPassword = process.env.SUPERADMIN_PASSWORD;
 
-  if (!envPassword) {
-    console.error('Missing superadmin-config.json and SUPERADMIN_PASSWORD.');
-    console.error('Set SUPERADMIN_PASSWORD to start server without local config file.');
-    process.exit(1);
-  }
-
+if (envPassword) {
   superadminConfig = {
     username: envUsername,
     passwordHash: bcrypt.hashSync(envPassword, 12)
   };
+} else {
+  try {
+    const configPath = path.join(__dirname, 'superadmin-config.json');
+    superadminConfig = JSON.parse(fs.readFileSync(configPath, 'utf8'));
+  } catch (error) {
+    console.error('Missing SUPERADMIN_PASSWORD and superadmin-config.json.');
+    console.error('Set SUPERADMIN_PASSWORD on server or create local superadmin-config.json.');
+    process.exit(1);
+  }
 }
 
 // Helper function để kiểm tra localhost
