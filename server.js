@@ -881,6 +881,10 @@ app.post('/api/test-tenant-name-validation', express.json(), (req, res) => {
 });
 
 
+// Lower third (OBS) chỉ mở qua /:tenant/lower-third — không cho /lower-third/ công khai
+app.get(['/lower-third', '/lower-third/', '/lower-third/index.html'], (req, res) => {
+  res.status(404).sendFile(path.join(__dirname, 'public', '404.html'));
+});
 
 // Serve static files
 app.use(express.static('public'));
@@ -896,18 +900,7 @@ app.get('/', (req, res) => {
 //   res.sendFile(path.join(__dirname, 'public', 'superadmin.html'));
 // });
 
-// Tenant-specific routes (require authentication)
-app.get('/:tenant/', (req, res, next) => {
-  const tenantId = req.params.tenant;
-  if (tenants[tenantId] && tenants[tenantId].active) {
-    req.tenant = tenants[tenantId];
-    req.tenantId = tenantId;
-  res.sendFile(path.join(__dirname, 'public', 'tenant-home.html'));
-  } else {
-    next(); // Pass to 404 handler
-  }
-});
-
+// Tenant-specific routes: đăng ký route cụ thể (admin, overlay, lower-third) TRƯỚC /:tenant/ để tránh xung đột
 app.get('/:tenant/admin', (req, res, next) => {
   const tenantId = req.params.tenant;
   if (tenants[tenantId] && tenants[tenantId].active) {
@@ -1035,6 +1028,29 @@ app.get('/:tenant/penalty', (req, res, next) => {
     req.tenant = tenants[tenantId];
     req.tenantId = tenantId;
     res.sendFile(path.join(__dirname, 'public', 'penalty-overlay.html'));
+  } else {
+    next(); // Pass to 404 handler
+  }
+});
+
+app.get('/:tenant/lower-third', (req, res, next) => {
+  const tenantId = req.params.tenant;
+  if (tenants[tenantId] && tenants[tenantId].active) {
+    req.tenant = tenants[tenantId];
+    req.tenantId = tenantId;
+    res.sendFile(path.join(__dirname, 'public', 'lower-third', 'index.html'));
+  } else {
+    next();
+  }
+});
+
+// Trang chủ tenant (/:tenant/) — đặt cuối cùng trong nhóm route tenant
+app.get('/:tenant/', (req, res, next) => {
+  const tenantId = req.params.tenant;
+  if (tenants[tenantId] && tenants[tenantId].active) {
+    req.tenant = tenants[tenantId];
+    req.tenantId = tenantId;
+    res.sendFile(path.join(__dirname, 'public', 'tenant-home.html'));
   } else {
     next(); // Pass to 404 handler
   }
